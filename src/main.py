@@ -2,7 +2,8 @@ from colorama import Fore, Style, init
 from address_book import AddressBook
 from record import Record
 import pickle
-
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import WordCompleter
 
 def save_data(book, filename="addressbook.pkl"):
     with open(filename, "wb") as f:
@@ -88,39 +89,75 @@ def show_birth(args, book):
 def all_birthdays(book):
     return book.birthdays()
 
+command_close = "close"
+command_exit = "exit"
+command_add = "add"
+command_change = "change"
+command_phone = "phone"
+command_all = "all"
+command_add_birthday = "add-birthday"
+command_show_birthday = "show-birthday"
+command_birthdays = "birthdays"
+
+commands = {
+    command_close: "Вийти з проекту",
+    command_exit: "Вийти з проекту",
+    command_add: "Додати контакт",
+    command_change: "Змінити контакт",
+    command_phone: "Змінити номер телефону",
+    command_all: "Показати всі контакти",
+    command_add_birthday: "Додати день народження",
+    command_show_birthday: "Показати день народження",
+    command_birthdays: "Показати всі дні народження"
+}
+completer = WordCompleter(commands.keys(), ignore_case=True)
+
+def print_all_commands():
+    delim = " | "
+    max_key_width = max(len(cmd) for cmd in commands.keys())
+    max_value_width = max(len(cmd) for cmd in commands.values())
+    horizontal_line = "-" * (max_key_width + max_value_width + len(delim))
+    print(horizontal_line)
+    print(f"{'Command':<{max_key_width}}{delim}Description")
+    print(horizontal_line)
+    for cmd, desc in commands.items():
+        print(f"{Fore.YELLOW}{cmd:<{max_key_width}}{Style.RESET_ALL}{delim}{desc}")
+    print(horizontal_line)
+
 def main():
     book = load_data()
     print("Welcome to the assistant bot!")
+    print_all_commands()
     while True:
-        user_input = input("Enter a command: ")
+        user_input = prompt("Enter a command: ", completer=completer)
         command, *args = parse_input(user_input)
 
-        if command in ["close", "exit"]:
+        if command in [command_close, command_exit]:
             print("Good bye!")
             break
 
         elif command == "hello":
             print("How can I help you?")
 
-        elif command == "add":
+        elif command == command_add:
             print(add_contact(args, book))
 
-        elif command == "change":
+        elif command == command_change:
             print(change_ph(args, book))
 
-        elif command == "phone":
+        elif command == command_phone:
             print(user_phone(args, book))
 
-        elif command == "all":
+        elif command == command_all:
             print(print_all(book))
 
-        elif command == "add-birthday":
+        elif command == command_add_birthday:
             print(add_birth(args, book))
 
-        elif command == "show-birthday":
+        elif command == command_show_birthday:
             print(show_birth(args, book))
 
-        elif command == "birthdays":
+        elif command == command_birthdays:
             print(all_birthdays(book))
 
         else:
