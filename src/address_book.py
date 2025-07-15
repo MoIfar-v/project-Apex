@@ -14,14 +14,8 @@ class AddressBook(UserList):
         except KeyError:
             print("No such contact exists")
 
-    def delete(self, name):
-        try:
-            for record in self.data:
-                if record.name.value == name:
-                    del record
-                    print("Contact successfully deleted")
-        except KeyError:
-            print("No such contact exists")
+    def delete(self, record):
+        self.remove(record)
 
     def birthdays(self):
         self.date_now = dt.today().date()                                              
