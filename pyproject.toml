@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hello-app"
+version = "0.1.0"
+description = "Simple colorful hello app"
+requires-python = ">=3.8"
+dependencies = [
+    "colorama>=0.4.6"
+]
+
+[project.scripts]
+hello = "main:main"
