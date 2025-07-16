@@ -45,9 +45,9 @@ class Record:
         self.phones.remove(old_phone)
         self.phones.append(new_phone)"""
     
-    def delete_phone(self):
+    """def delete_phone(self):
         self.phones.clear()
-        return print(f"All contact phone numbers for {self.name} have been deleted.")
+        return print(f"All contact phone numbers for {self.name} have been deleted.")"""
     
     """def add_birthday(self, birthday):
         self.birthday = fields.Birthday(birthday)
@@ -57,7 +57,7 @@ class Record:
         self.birthday = fields.Email(email)
         return print("Email додано.")"""
     
-    def edit(self, field, new_value, old_value):
+    def edit_contact(self, field, new_value, old_value):
         """Функція змінює поточне значення поля контакту та задає нове якщо значення поля = None
 
         Args:
@@ -102,6 +102,36 @@ class Record:
             self.email = fields.Email(new_value)    
             return massege
             
-            
+    def delete_field(self, field, value):
+        """Видаляє задані поля контакту шляхом встановлення в них значення None
+
+        Args:
+            field (str): поле яке потребує видалення
+            value (str): номер телефону який має бути видалений зі списку Person.phones
+
+        Returns:
+            str: повідомлення користувачу
+        """
+        if field == "phones":
+            if value in self.phones:
+                index = self.phones.index(value)
+                self.phones.remove(value)
+                massege = "Phone deleted."
+            else:
+                massege = "This phone does not exist."
+            return massege
+        
+        elif field == "birthday":
+            self.birthday = None
+            return  "Birthday deleted."
+        
+        elif field == "address":
+            self.address = None
+            return "Address deleted."
+        
+        elif field == "email":
+            self.email = None
+            return "Email deleted."
+        
     def __repr__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p for p in self.phones)}, birthday: {self.birthday}, address: {self.address}, email: {self.email}\n"

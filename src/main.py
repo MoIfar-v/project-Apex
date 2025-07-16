@@ -102,15 +102,31 @@ def delete_contact(args, book):
 
 @input_error 
 def edit_contact(args, book):
+    #Приклад синтаксису 1: edit Bob phones 3423233456 2334565432
+    #Приклад синтаксису 2: edit Victor email victor111@gmail.com
+    
     name, field, new_value, old_value, *_ = args + [None,]
     record = book.find(name)
     
     if record is None:
         message = "There is no contact named {name}"
-    message = record.edit(field, new_value, old_value)
+    message = record.edit_contact(field, new_value, old_value)
     
     return message
 
+@input_error
+def delete_field(args, book):
+    #Приклад синтаксису 1: delete-field Jane phones 4534231295
+    #Приклад синтаксису 1: delete-field Bob address
+    
+    name, field, value, *_ = args + [None,]
+    record = book.find(name)
+    
+    if record is None:
+        message = "There is no contact named {name}"
+    message = record.delete_field(field, value)
+    
+    return message
 
 command_close = "close"
 command_exit = "exit"
@@ -128,6 +144,7 @@ command_search_note = "search-note"
 command_edit_note = "edit-note"
 command_delete = "delete"
 command_edit = "edit"
+command_delete_field = "delete-field"
 
 commands = {
     command_close: "Вийти з проекту",
@@ -145,7 +162,8 @@ commands = {
     command_search_note: "Знайти нотатку",
     command_edit_note: "Редагувати нотатку",      
     command_delete: "Видалити контакт",
-    command_edit: "Змінити поля контакту"
+    command_edit: "Змінити поля контакту",
+    command_delete_field: "Видалення поля контакту"
 }
 completer = WordCompleter(commands.keys(), ignore_case=True)
 
@@ -233,6 +251,8 @@ def main():
             
         elif command == command_edit:
             print(edit_contact(args, book))
+        elif command == command_delete_field:
+            print(delete_field(args, book))
         else:
             print("Invalid command.")
 
