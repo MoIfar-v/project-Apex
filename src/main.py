@@ -201,7 +201,8 @@ def main():
 
         elif command == command_add_note:
             text = input("Введи текст нотатки: ")
-            notes.add_note(text.strip())
+            tags = input("Введи теги через кому: ").split(",")
+            notes.add_note(text.strip(), [tag.strip() for tag in tags])
             print("Нотатку додано.")
 
         elif command == command_delete_note:
