@@ -31,7 +31,11 @@ class Phone(Field):
 class Birthday(Field):
     def __init__(self, value):
         try:
+<<<<<<< HEAD
             self.birthday = dt.strptime(value,"%d.%m.%Y").date()
+=======
+            self.value =  dt.strptime(value,"%d.%m.%Y").date()
+>>>>>>> origin/main
             
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY")

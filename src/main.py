@@ -1,20 +1,21 @@
-from colorama import Fore, Style, init
 from address_book import AddressBook
 from record import Record
+from notes import Notes
+from colorama import Fore, Style, init 
 import pickle
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 
-def save_data(book, filename="addressbook.pkl"):
+def save_data(book, notes, filename="addressbook.pkl"):
     with open(filename, "wb") as f:
-        pickle.dump(book, f)
+        pickle.dump((book, notes), f)
 
 def load_data(filename="addressbook.pkl"):
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook()  # Повернення нової адресної книги, якщо файл не знайдено
+        return AddressBook(), Notes()  # Повернення нової адресної книги та нотатків, якщо файл не знайдено
 
 def input_error(func):
     def inner(*args, **kwargs):
@@ -37,15 +38,15 @@ def parse_input(user_input):
 
 @input_error
 def add_contact(args, book):
-    name, phone = args
+    name, phone, birthday, address, email, *_ = args + [None, None, None]
     record = book.find(name)
     message = "Contact updated."
     if record is None:
         record = Record(name)
         book.add_record(record)
         message = "Contact added."
-    if phone:
-        record.add_phone(phone)
+    data = [phone, birthday, address, email]
+    record.add(data)
     return message
 
 @input_error
@@ -86,9 +87,33 @@ def show_birth(args, book):
     return book.show_birthday(name)
 
 @input_error    
-def all_birthdays(args, book):
+def all_birthdays(args, args, book):
     days_forward, *_ = args
     return book.birthdays(int(days_forward))
+
+@input_error 
+def delete_contact(args, book):
+    name, *_ = args
+    record = book.find(name)
+    message = f'Контакт "{name}" видалено'
+    if record is None:
+        message = "Такого контакта не існує"
+    book.delete(record)
+    return message
+
+@input_error 
+def edit_contact(args, book):
+    name, field, new_value, old_value, *_ = args + [None,]
+    record = book.find(name)
+    
+    if record is None:
+        message = "Такого контакта не існує"
+        
+    record.edit(field, new_value, old_value)
+    message = f'Поле "{field}" контакта "{name}" змінено.'
+    
+    return message
+
 
 command_close = "close"
 command_exit = "exit"
@@ -99,6 +124,13 @@ command_all = "all"
 command_add_birthday = "add-birthday"
 command_show_birthday = "show-birthday"
 command_birthdays = "birthdays"
+command_add_note = "add-note"
+command_delete_note = "delete-note"
+command_show_note = "show-note"
+command_search_note = "search-note"
+command_edit_note = "edit-note"
+command_delete = "delete"
+command_edit = "edit"
 
 commands = {
     command_close: "Вийти з проекту",
@@ -109,7 +141,14 @@ commands = {
     command_all: "Показати всі контакти",
     command_add_birthday: "Додати день народження",
     command_show_birthday: "Показати день народження",
-    command_birthdays: "Показати всі дні народження"
+    command_birthdays: "Показати всі дні народження",
+    command_add_note: "Додати нотатку",
+    command_delete_note: "Видалити нотатку",
+    command_show_note: "Показати усі нотатки",
+    command_search_note: "Знайти нотатку",
+    command_edit_note: "Редагувати нотатку",      
+    command_delete: "Видалити контакт",
+    command_edit: "Змінити поля контакту"
 }
 completer = WordCompleter(commands.keys(), ignore_case=True)
 
@@ -126,7 +165,7 @@ def print_all_commands():
     print(horizontal_line)
 
 def main():
-    book = load_data()
+    book, notes = load_data()
     print("Welcome to the assistant bot!")
     print_all_commands()
     while True:
@@ -157,14 +196,54 @@ def main():
 
         elif command == command_show_birthday:
             print(show_birth(args, book))
-
+            
         elif command == command_birthdays:
             print(all_birthdays(args, book))
 
+        elif command == command_add_note:
+            text = input("Введи текст нотатки: ")
+            tags = input("Введи теги через кому: ").split(",")
+            notes.add_note(text.strip(), [tag.strip() for tag in tags])
+            print("Нотатку додано.")
+
+        elif command == command_delete_note:
+            index_note = input("Індекс нотатки: ")
+            if index_note.isdigit():
+                print(notes.delete_note(int(index_note)))
+
+        elif command == command_show_note:
+            for i, note in enumerate(notes.show_all()):
+                print(f"{i}: {note}")
+
+        elif command == command_search_note:
+            key = input("Ключове слово або тег: ")
+            matches = notes.search_note(key)
+            if matches:
+                for i, note in enumerate(matches):
+                    print(f"{i}: {note}")
+            else:
+                print("Нічого не знайдено.")
+
+        elif command == command_edit_note:
+            index_note = input("Індекс нотатки: ")
+            if index_note.isdigit():
+                new_text = input("Новий текст: ")
+                print(notes.edit_note(int(index_note), new_text))  
+            else:
+                print("Індекс недійсний")                 
+            
+        elif command == command_delete:
+            print(delete_contact(args, book))
+            
+        elif command == command_edit:
+            # edit Ім'я Поле Нове_значення Старе_значення(для зміни телефону)
+            print(edit_contact(args, book))
+           
         else:
             print("Invalid command.")
+  
+        save_data(book, notes)
         
-        save_data(book)
 
 if __name__ == "__main__":
     main()

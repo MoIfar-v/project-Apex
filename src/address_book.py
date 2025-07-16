@@ -14,14 +14,8 @@ class AddressBook(UserList):
         except KeyError:
             print("No such contact exists")
 
-    def delete(self, name):
-        try:
-            for record in self.data:
-                if record.name.value == name:
-                    del record
-                    print("Contact successfully deleted")
-        except KeyError:
-            print("No such contact exists")
+    def delete(self, record):
+        self.remove(record)
 
     def birthdays(self, days_forward):
         upcoming_birthdays = [record for record in self.data if record.has_birthday_next_days(days_forward)]
