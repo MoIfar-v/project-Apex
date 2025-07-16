@@ -17,25 +17,9 @@ class AddressBook(UserList):
     def delete(self, record):
         self.remove(record)
 
-    def birthdays(self):
-        self.date_now = dt.today().date()                                              
-        self.birthdays_list = []
-        for u_birth in self.data:
-            if u_birth.birthday == None:
-                continue
-            
-            celeb_year = self.date_now.year
-        
-            if u_birth.birthday.birthday.month < self.date_now.month and u_birth.birthday.birthday.day < self.date_now.day:
-                celeb_year = celeb_year + 1
-                continue
-        
-            u_birth_tmp = u_birth.birthday.birthday.replace(year=celeb_year)
-            delta_days = u_birth_tmp - self.date_now
-        
-            if delta_days.days > 0 and (13 - self.date_now.weekday()) > delta_days.days:
-                self.birthdays_list.append(u_birth)
-        return self.birthdays_list
+    def birthdays(self, days_forward):
+        upcoming_birthdays = [record for record in self.data if record.has_birthday_next_days(days_forward)]
+        return sorted(upcoming_birthdays, key=lambda record: record.birthday.value)
     
     def show_birthday(self, name):
         try:
