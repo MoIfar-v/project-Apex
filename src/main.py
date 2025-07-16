@@ -1,6 +1,7 @@
 from colorama import Fore, Style, init
 from address_book import AddressBook
 from record import Record
+from notes import Notes
 import pickle
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
@@ -98,6 +99,11 @@ command_all = "all"
 command_add_birthday = "add-birthday"
 command_show_birthday = "show-birthday"
 command_birthdays = "birthdays"
+command_add_note = "add-note"
+command_delete_note = "delete-note"
+command_show_note = "show-note"
+command_search_note = "search-note"
+command_edit_note = "edit-note"
 
 commands = {
     command_close: "Вийти з проекту",
@@ -108,7 +114,12 @@ commands = {
     command_all: "Показати всі контакти",
     command_add_birthday: "Додати день народження",
     command_show_birthday: "Показати день народження",
-    command_birthdays: "Показати всі дні народження"
+    command_birthdays: "Показати всі дні народження",
+    command_add_note: "Додати нотатку",
+    command_delete_note: "Видалити нотатку",
+    command_show_note: "Показати усі нотатки",
+    command_search_note: "Знайти нотатку",
+    command_edit_note: "Редагувати нотатку"      
 }
 completer = WordCompleter(commands.keys(), ignore_case=True)
 
@@ -159,6 +170,37 @@ def main():
 
         elif command == command_birthdays:
             print(all_birthdays(book))
+
+        elif command == command_add_note:
+            text = input("Введи текст нотатки: ")
+            notes.add_note(text.strip())
+            print("Нотатку додано.")
+
+        elif command == command_delete_note:
+            index_note = input("Індекс нотатки: ")
+            if index_note.isdigit():
+                print(notes.delete_note(int(index_note)))
+
+        elif command == command_show_note:
+            for i, note in enumerate(notes.show_all()):
+                print(f"{i}: {note}")
+
+        elif command == command_search_note:
+            key = input("Ключове слово або тег: ")
+            matches = notes.search_note(key)
+            if matches:
+                for i, note in enumerate(matches):
+                    print(f"{i}: {note}")
+            else:
+                print("Нічого не знайдено.")
+
+        elif command == command_edit_note:
+            index_note = input("Індекс нотатки: ")
+            if index_note.isdigit():
+                new_text = input("Новий текст: ")
+                print(notes.edit_note(int(index_note), new_text))  
+            else:
+                print("Індекс недійсний")                 
 
         else:
             print("Invalid command.")
