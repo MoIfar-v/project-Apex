@@ -5,10 +5,20 @@ class Record:
         self.name = fields.Name(name)
         self.phones = []
         self.birthday = None
+        self.address = None
+        self.email = None
 
     # реалізація класу
-    def add_phone(self, phone):
-        self.phones.append(str(fields.Phone(phone)))
+    def add(self, args):
+        phone, birthday, address, email = args
+        if phone:
+            self.phones.append(str(fields.Phone(phone)))
+        if birthday:
+            self.birthday = fields.Birthday(birthday)
+        if address:
+            pass
+        if email:
+            self.email = str(fields.Email(email))
     
     def find_phone(self, phone):
         try:
@@ -29,5 +39,13 @@ class Record:
         self.birthday = fields.Birthday(birthday)
         return print("Birthday added.")
     
+    def add_email(self, email):
+        self.birthday = fields.Email(email)
+        return print("Email додано.")
+    
+    def edit(self, field, new_value, old_value):
+        if field == "email":
+            self.email = new_value
+            
     def __repr__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p for p in self.phones)}"
+        return f"Contact name: {self.name.value}, phones: {'; '.join(p for p in self.phones)}, birthday: {self.birthday}, address: {self.address}, email: {self.email}\n"
