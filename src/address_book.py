@@ -19,7 +19,7 @@ class AddressBook(UserList):
 
     def birthdays(self, days_forward):
         upcoming_birthdays = [record for record in self.data if record.has_birthday_next_days(days_forward)]
-        return sorted(upcoming_birthdays, key=lambda record: record.birthday.birthday)
+        return sorted(upcoming_birthdays, key=lambda record: record.birthday.value)
     
     def show_birthday(self, name):
         try:

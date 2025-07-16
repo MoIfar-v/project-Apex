@@ -5,6 +5,7 @@ from colorama import Fore, Style, init
 import pickle
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
+from exceptions import BirthdayParamNotValid
 
 def save_data(book, notes, filename="addressbook.pkl"):
     with open(filename, "wb") as f:
@@ -22,12 +23,17 @@ def input_error(func):
         try:
             return func(*args, **kwargs)
         except ValueError:
-            return "Give me name and phone please."
+            return paint_error("Give me name and phone please.")
         except KeyError:
-            return "There is no contact with that name."
+            return paint_error("There is no contact with that name.")
         except IndexError:
-            return "Я не знаю нашо, і де це виключення буде викликатися але хай буде)."
+            return paint_error("Я не знаю нашо, і де це виключення буде викликатися але хай буде).")
+        except Exception as e:
+            return paint_error(str(e))
     return inner
+
+def paint_error(error):
+    return f"{Fore.RED}{error}{Style.RESET_ALL}"
 
 @input_error
 def parse_input(user_input):
@@ -87,8 +93,12 @@ def show_birth(args, book):
     return book.show_birthday(name)
 
 @input_error    
-def all_birthdays(args, args, book):
-    days_forward, *_ = args
+def all_birthdays(args, book):
+    try: 
+        days_forward, *_ = args
+        days_forward = int(days_forward)
+    except:
+        raise BirthdayParamNotValid()
     return book.birthdays(int(days_forward))
 
 @input_error 
