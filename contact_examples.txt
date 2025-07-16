@@ -1,0 +1,6 @@
+Command Name Phone Birthday address email
+
+add Jane 2342342345 12.06.1985 ____ rthrthr@gmail.com
+add Bob 3454534534 04.12. 1993 ____ 
+add Jhon 9379992222 
+add Victor 2342342356 ____ ____ rthrthr@gmail.com
