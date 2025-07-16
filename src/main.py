@@ -6,16 +6,16 @@ import pickle
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 
-def save_data(book, notes, filename="addressbook.pkl"):
+def save_data(book, filename="addressbook.pkl"):
     with open(filename, "wb") as f:
-        pickle.dump((book, notes), f)
+        pickle.dump(book, f)
 
 def load_data(filename="addressbook.pkl"):
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook(), Notes()  # Повернення нової адресної книги та нотатків, якщо файл не знайдено
+        return AddressBook()  # Повернення нової адресної книги, якщо файл не знайдено
 
 def input_error(func):
     def inner(*args, **kwargs):
@@ -110,8 +110,9 @@ def edit_contact(args, book):
     
     if record is None:
         message = "There is no contact named {name}"
+def-edit()
     message = record.edit_contact(field, new_value, old_value)
-    
+
     return message
 
 @input_error
@@ -180,7 +181,7 @@ def print_all_commands():
     print(horizontal_line)
 
 def main():
-    book, notes = load_data()
+    book = load_data()
     print("Welcome to the assistant bot!")
     print_all_commands()
     while True:
@@ -217,8 +218,7 @@ def main():
 
         elif command == command_add_note:
             text = input("Введи текст нотатки: ")
-            tags = input("Введи теги через кому: ").split(",")
-            notes.add_note(text.strip(), [tag.strip() for tag in tags])
+            notes.add_note(text.strip())
             print("Нотатку додано.")
 
         elif command == command_delete_note:
