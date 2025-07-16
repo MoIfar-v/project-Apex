@@ -1,4 +1,5 @@
 import fields
+import re
 
 class Record:
     def __init__(self, name):
@@ -10,13 +11,26 @@ class Record:
 
     # реалізація класу
     def add(self, args):
+        """Додає новий контакт типу Record()
+
+        Args:
+            args (phone, birthday, address, email): приймають значення полів нового контакту. 
+            Доступні типи: str - змінна має значення
+                        None - змінна має значення
+                        ____ - довільна кількість символу "_" використовується для пропуску непотрібного поля
+                        Наприклад: add Jane 2342342345 12.06.1985 ____ rthrthr@gmail.com, пропущено поле address
+        """
+        # при створенні контакту замість пропусків "____" встановлює значення None
+        pattern = r"^_+$"
+        args = [None if re.fullmatch(pattern, arg) else arg for arg in args]
+        
         phone, birthday, address, email = args
         if phone:
             self.phones.append(str(fields.Phone(phone)))
         if birthday:
             self.birthday = fields.Birthday(birthday)
         if address:
-            pass
+            self.address = address
         if email:
             self.email = fields.Email(email)
     
@@ -27,21 +41,21 @@ class Record:
         except ValueError:
             print(f"Contact {self.name} does not have the number {phone}.")
     
-    def edit_phone(self, old_phone, new_phone):
+    """def edit_phone(self, old_phone, new_phone):
         self.phones.remove(old_phone)
-        self.phones.append(new_phone)
+        self.phones.append(new_phone)"""
     
     def delete_phone(self):
         self.phones.clear()
         return print(f"All contact phone numbers for {self.name} have been deleted.")
     
-    def add_birthday(self, birthday):
+    """def add_birthday(self, birthday):
         self.birthday = fields.Birthday(birthday)
         return print("Birthday added.")
     
     def add_email(self, email):
         self.birthday = fields.Email(email)
-        return print("Email додано.")
+        return print("Email додано.")"""
     
     def edit(self, field, new_value, old_value):
         """Функція змінює поточне значення поля контакту та задає нове якщо значення поля = None
