@@ -123,7 +123,6 @@ command_all = "all"
 command_add_birthday = "add-birthday"
 command_show_birthday = "show-birthday"
 command_birthdays = "birthdays"
-
 command_add_note = "add-note"
 command_delete_note = "delete-note"
 command_show_note = "show-note"
@@ -202,7 +201,8 @@ def main():
 
         elif command == command_add_note:
             text = input("Введи текст нотатки: ")
-            notes.add_note(text.strip())
+            tags = input("Введи теги через кому: ").split(",")
+            notes.add_note(text.strip(), [tag.strip() for tag in tags])
             print("Нотатку додано.")
 
         elif command == command_delete_note:

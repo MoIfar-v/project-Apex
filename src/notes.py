@@ -1,22 +1,21 @@
-# Треба додати в main.py імпорт цих класів з notes.py
-# а також в команди треба додати: add-note, search-note, delete-note, edit-note, show-note
-
 class Note:
-    def __init__(self, text):
+    def __init__(self, text, tags=None):
         self.text = text
+        self.tags = tags if tags else []
 
     def __str__(self):
-        return f"{self.text}"
+        tags_str = ", ".join(self.tags)
+        return f"{self.text} [Tags: {tags_str}]"
 
 class Notes:
     def __init__(self):
         self.notes = []
 
-    def add_note(self, text):
-        self.notes.append(Note(text))
+    def add_note(self, text, tags):
+        self.notes.append(Note(text, tags))
 
     def search_note(self, keyword):
-        return [note for note in self.notes if keyword in note.text]
+        return [note for note in self.notes if keyword in note.text or keyword in note.tags]
 
     def delete_note(self, index):
         if 0 <= index < len(self.notes):
