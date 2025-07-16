@@ -123,7 +123,6 @@ command_all = "all"
 command_add_birthday = "add-birthday"
 command_show_birthday = "show-birthday"
 command_birthdays = "birthdays"
-
 command_add_note = "add-note"
 command_delete_note = "delete-note"
 command_show_note = "show-note"
@@ -146,7 +145,7 @@ commands = {
     command_delete_note: "Видалити нотатку",
     command_show_note: "Показати усі нотатки",
     command_search_note: "Знайти нотатку",
-    command_edit_note: "Редагувати нотатку"      
+    command_edit_note: "Редагувати нотатку",      
     command_delete: "Видалити контакт",
     command_edit: "Змінити поля контакту"
 }
