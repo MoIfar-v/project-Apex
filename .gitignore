@@ -5,3 +5,6 @@ __pycache__/
 *egg-info/
 
 pullrequests-list.txt
+addressbook.pkl
+src/addressbook.pkl
+

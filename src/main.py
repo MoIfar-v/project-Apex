@@ -86,8 +86,9 @@ def show_birth(args, book):
     return book.show_birthday(name)
 
 @input_error    
-def all_birthdays(book):
-    return book.birthdays()
+def all_birthdays(args, book):
+    days_forward, *_ = args
+    return book.birthdays(int(days_forward))
 
 command_close = "close"
 command_exit = "exit"
@@ -158,7 +159,7 @@ def main():
             print(show_birth(args, book))
 
         elif command == command_birthdays:
-            print(all_birthdays(book))
+            print(all_birthdays(args, book))
 
         else:
             print("Invalid command.")

@@ -31,10 +31,23 @@ class Phone(Field):
 class Birthday(Field):
     def __init__(self, value):
         try:
-            self.birthday =  dt.strptime(value,"%d.%m.%Y").date()
+            self.birthday = dt.strptime(value,"%d.%m.%Y").date()
             
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY")
+        
+    def has_birthday_next_days(self, days):
+        birth = self.birthday
+        today = dt.today().date()
+        next_birthday = self.next_celebration()
+        if(next_birthday < today):
+              next_birthday = next_birthday.replace(year=next_birthday.year+1)
+        difference = next_birthday - today
+        return difference.days <= days
+        
+    def next_celebration(self):
+        today = dt.today().date()
+        return dt(year=today.year, month=self.birthday.month, day=self.birthday.day).date()
         
 class Email(Field):
     def __init__(self, value):

@@ -29,5 +29,12 @@ class Record:
         self.birthday = fields.Birthday(birthday)
         return print("Birthday added.")
     
+    
+    def has_birthday_next_days(self, days):
+        if self.birthday:
+            return self.birthday.has_birthday_next_days(days)
+        else:
+            return False
+    
     def __repr__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p for p in self.phones)}"
