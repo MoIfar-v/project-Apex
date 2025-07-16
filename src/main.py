@@ -242,6 +242,7 @@ def main():
             print("Invalid command.")
   
         save_data(book, notes)
+        
 
 if __name__ == "__main__":
     main()
