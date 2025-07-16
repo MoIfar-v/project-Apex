@@ -96,7 +96,7 @@ def delete_contact(args, book):
     record = book.find(name)
     message = f'Контакт "{name}" видалено'
     if record is None:
-        message = "Такого контакта не існує"
+        message = f"There is no contact named {name}"
     book.delete(record)
     return message
 
@@ -106,10 +106,8 @@ def edit_contact(args, book):
     record = book.find(name)
     
     if record is None:
-        message = "Такого контакта не існує"
-        
-    record.edit(field, new_value, old_value)
-    message = f'Поле "{field}" контакта "{name}" змінено.'
+        message = "There is no contact named {name}"
+    message = record.edit(field, new_value, old_value)
     
     return message
 

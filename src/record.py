@@ -18,7 +18,7 @@ class Record:
         if address:
             pass
         if email:
-            self.email = str(fields.Email(email))
+            self.email = fields.Email(email)
     
     def find_phone(self, phone):
         try:
@@ -44,8 +44,50 @@ class Record:
         return print("Email додано.")
     
     def edit(self, field, new_value, old_value):
-        if field == "email":
-            self.email = new_value
+        """Функція змінює поточне значення поля контакту та задає нове якщо значення поля = None
+
+        Args:
+            field (str): Поле для зміни
+            new_value (str): Нове значення
+            old_value (str / None): Старе значення. Для поля phones отримує номер 
+                                    який треба замінити. Для всих інших None
+
+        Returns:
+            str: Повідмлення користувачу.
+        """
+        if field == "phones":
+            if old_value in self.phones:
+                index = self.phones.index(old_value)
+                self.phones[index] = str(fields.Phone(new_value))
+                massege = "Phone changed."
+            else:
+                self.phones.append(str(fields.Phone(new_value)))
+                massege = "Phone added."
+            return massege
+        elif field == "birthday":
+            if self.birthday:
+                massege = "Birthday changed."
+            else:
+                massege = "Birthday added."
+            self.birthday = fields.Birthday(new_value)
+            return massege
+        
+        elif field == "address":
+            if self.address:
+                massege = "Address changed."
+            else:
+                massege = "Address added."
+            self.address = new_value # fields.Address(new_value)
+            return massege
+        
+        elif field == "email":
+            if self.email:
+                massege = "Email changed."
+            else:
+                massege = "Email added."
+            self.email = fields.Email(new_value)    
+            return massege
+            
             
     def __repr__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p for p in self.phones)}, birthday: {self.birthday}, address: {self.address}, email: {self.email}\n"
