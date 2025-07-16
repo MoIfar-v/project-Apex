@@ -1,6 +1,7 @@
 from address_book import AddressBook
 from record import Record
 from notes import Notes
+from field import Address #через те що моя футкція з 3 запитів її потрібно дати окремо
 from colorama import Fore, Style, init 
 import pickle
 from prompt_toolkit import prompt
@@ -36,9 +37,22 @@ def parse_input(user_input):
     cmd = cmd.strip().lower()
     return cmd, *args
 
+# Функція, яка запитує місто і вулицю, перевіряє їх, і повертає коректну адресу
+def ask_for_address():
+    while True:
+        print("Вибери місто з дозволених:")
+        Address.print_allowed_cities()  # Виводимо список дозволених міст
+        city = input("Місто: ").strip()
+        street = input("Вулиця з номером (наприклад, Шевченка 10): ").strip()
+        try:
+            return str(Address(city, street))  # Якщо все валідно — повертаємо адресу
+        except ValueError as e:
+            print(f"Помилка: {e}. Спробуй ще раз.")  # Якщо помилка — просимо повторити
+
 @input_error
 def add_contact(args, book):
-    name, phone, birthday, address, email, *_ = args + [None, None, None]
+    name, phone, birthday, email, *_ = args + [None, None, None]
+    address = ask_for_address()  # Запитуємо адресу окремо через функцію з перевіркою
     record = book.find(name)
     message = "Contact updated."
     if record is None:
@@ -242,7 +256,6 @@ def main():
             print("Invalid command.")
   
         save_data(book, notes)
-        
 
 if __name__ == "__main__":
     main()
