@@ -132,6 +132,13 @@ class Record:
         elif field == "email":
             self.email = None
             return "Email deleted."
-        
+
+    
+    def has_birthday_next_days(self, days):
+        if self.birthday:
+            return self.birthday.has_birthday_next_days(days)
+        else:
+            return False
+
     def __repr__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p for p in self.phones)}, birthday: {self.birthday}, address: {self.address}, email: {self.email}\n"
