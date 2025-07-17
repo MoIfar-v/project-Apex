@@ -1,6 +1,7 @@
 from address_book import AddressBook
 from record import Record
 from notes import Notes
+from field import Address #щоб можна було умови
 from colorama import Fore, Style, init 
 import pickle
 from prompt_toolkit import prompt
@@ -43,8 +44,21 @@ def parse_input(user_input):
     return cmd, *args
 
 @input_error
+def ask_for_address(): # Функція, яка запитує місто і вулицю, перевіряє їх, і повертає коректну адресу
+    while True:
+        print("Вибери місто з дозволених:")
+        Address.print_allowed_cities()  # Виводимо список дозволених міст
+        city = input("Місто: ").strip()
+        street = input("Вулиця з номером (наприклад, Шевченка 10): ").strip()
+        try:
+            return str(Address(city, street))  # Якщо все валідно — повертаємо адресу
+        except ValueError as e:
+            print(f"Помилка: {e}. Спробуй ще раз.")  # Інакше просимо ввести ще раз
+
+@input_error
 def add_contact(args, book):
-    name, phone, birthday, address, email, *_ = args + [None, None, None]
+    name, phone, birthday, email, *_ = args + [None, None, None]
+    address = ask_for_address() 
     record = book.find(name)
     message = "Contact updated."
     if record is None:
@@ -111,6 +125,29 @@ def delete_field(args, book):
     
     return message
 
+@input_error
+def find_contact(args, book):
+    field, value, *_ = args
+    result = []
+
+    for record in book:
+        if field == "name" and record.name.value == value:
+            result.append(record)
+        elif field == "phone" and any(ph.value == value for ph in record.phones):
+            result.append(record)
+        elif field == "birthday" and record.birthday and record.birthday.value.strftime("%d.%m.%Y") == value:
+            result.append(record)
+        elif field == "email" and record.email and record.email.value == value:
+            result.append(record)
+        elif field == "address" and record.address and value.lower() in str(record.address).lower():
+            result.append(record)
+
+    if not result:
+        return "Контактів не знайдено"
+    
+    return "\n".join(str(r) for r in result)
+
+
 command_close = "close"
 command_exit = "exit"
 command_add = "add"
@@ -125,6 +162,7 @@ command_edit_note = "edit-note"
 command_delete = "delete"
 command_edit = "edit"
 command_delete_field = "delete-field"
+command_find = "find"
 
 commands = {
     command_close: "Вийти з проекту",
@@ -141,6 +179,7 @@ commands = {
     command_delete: "Видалити контакт",
     command_edit: "Змінити поля контакту",
     command_delete_field: "Видалення поля контакту"
+    command_find: "Знайти контакт за полем"
 }
 completer = WordCompleter(commands.keys(), ignore_case=True)
 
@@ -224,7 +263,11 @@ def main():
             print(delete_field(args, book))
         else:
             print("Invalid command.")
+        elif command == command_find:
+            print(find_contact(args, book))
         save_data(book, notes)
+       
+
 
 if __name__ == "__main__":
     main()
