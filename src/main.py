@@ -121,8 +121,9 @@ def edit_contact(args, book):
     
     if record is None:
         message = "There is no contact named {name}"
-    message = record.ededit_contact(field, new_value, old_value)
-    
+def-edit()
+    message = record.edit_contact(field, new_value, old_value)
+
     return message
 
 @input_error
@@ -266,8 +267,7 @@ def main():
             print(delete_field(args, book))
         else:
             print("Invalid command.")
-
-        save_data(book)
+        save_data(book, notes)
 
 if __name__ == "__main__":
     main()
