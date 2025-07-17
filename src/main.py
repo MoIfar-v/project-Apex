@@ -6,7 +6,7 @@ from colorama import Fore, Style, init
 import pickle
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
-from exceptions import BirthdayParamNotValid
+from exceptions import BirthdayParamNotValid, NotesIndexNotValid
 
 def save_data(book, notes, filename="addressbook.pkl"):
     with open(filename, "wb") as f:
@@ -28,7 +28,7 @@ def input_error(func):
         except KeyError:
             return paint_error("There is no contact with that name.")
         except IndexError:
-            return paint_error("Я не знаю нашо, і де це виключення буде викликатися але хай буде).")
+            return paint_error("Index invalid")
         except Exception as e:
             return paint_error(str(e))
     return inner
@@ -223,10 +223,10 @@ def main():
             print(all_birthdays(args, book))
 
         elif command == command_add_note:
-            text = input("Введи текст нотатки: ")
-            tags = input("Введи теги через кому: ").split(",")
-            notes.add_note(text.strip(), [tag.strip() for tag in tags])
-            print("Нотатку додано.")
+            text = input("Enter note text: ")
+            tags = input("Enter tags separated by commas: ").split(",")
+            notes.add_note(text.strip(), tags)
+            print("Note added")
 
         elif command == command_delete_note:
             index_note = input("Індекс нотатки: ")
@@ -238,29 +238,44 @@ def main():
                 print(f"{i}: {note}")
 
         elif command == command_search_note:
-            key = input("Ключове слово або тег: ")
+            key = input("Keyword or tag: ")
             matches = notes.search_note(key)
             if matches:
                 for i, note in enumerate(matches):
                     print(f"{i}: {note}")
             else:
-                print("Нічого не знайдено.")
+                print("Nothing found")
+
+        elif command == command_delete_note:
+            index_note = input("Index of notes: ")
+            try: 
+                if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
+                    print(notes.delete_note(int(index_note)))
+                else:
+                    print("Index invalid")
+            except:
+                raise NotesIndexNotValid()
 
         elif command == command_edit_note:
-            index_note = input("Індекс нотатки: ")
-            if index_note.isdigit():
-                new_text = input("Новий текст: ")
-                print(notes.edit_note(int(index_note), new_text))  
-            else:
-                print("Індекс недійсний")                 
+            index_note = input("Index of notes: ")
+            try: 
+                if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
+                    new_text = input("New text: ")
+                    print(notes.edit_note(int(index_note), new_text)) 
+                else:
+                    print("Index invalid")
+            except:
+                raise NotesIndexNotValid()                                 
             
         elif command == command_delete:
             print(delete_contact(args, book))
             
         elif command == command_edit:
             print(edit_contact(args, book))
+
         elif command == command_delete_field:
             print(delete_field(args, book))
+            
         else:
             print("Invalid command.")
         elif command == command_find:
