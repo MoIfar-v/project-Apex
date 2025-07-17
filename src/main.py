@@ -16,7 +16,7 @@ def load_data(filename="addressbook.pkl"):
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook(), Notes()  # Повернення нової адресної книги та нотатків, якщо файл не знайдено
+        return AddressBook(), Notes() # Повернення нової адресної книги, якщо файл не знайдено
 
 def input_error(func):
     def inner(*args, **kwargs):
@@ -191,7 +191,7 @@ def print_all_commands():
     print(horizontal_line)
 
 def main():
-    book, notes = load_data()
+    book, notes= load_data()
     print("Welcome to the assistant bot!")
     print_all_commands()
     while True:
@@ -229,7 +229,7 @@ def main():
         elif command == command_add_note:
             text = input("Введи текст нотатки: ")
             tags = input("Введи теги через кому: ").split(",")
-            notes.add_note(text.strip(), tags)
+            notes.add_note(text.strip(), [tag.strip() for tag in tags])
             print("Нотатку додано.")
 
         elif command == command_delete_note:
