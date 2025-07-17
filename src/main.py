@@ -55,38 +55,10 @@ def add_contact(args, book):
     record.add(data)
     return message
 
-"""@input_error
-def change_ph(args, book):
-    name, old_phone, new_phone = args
-    record = book.find(name)
-    if record != None:
-        record.edit_phone(old_phone, new_phone)
-        return "The phone has been replaced"
-    else:    
-        return "Contact does not exist"""
-
-"""@input_error
-def user_phone(args, book):
-    name, *_ = args
-    record = book.find(name)
-    if record != None:
-        return record.phones
-    else:    
-        return "Contact does not exist"""
-
 @input_error
 def print_all(book):
     return book
 
-"""@input_error
-def add_birth(args, book):
-    name, birthday, *_ = args
-    record = book.find(name)
-    if record != None:
-        record.add_birthday(birthday)
-    else:    
-        return "Contact does not exist"
-"""
 @input_error
 def show_birth(args, book):
     name, *_ = args
@@ -142,10 +114,7 @@ def delete_field(args, book):
 command_close = "close"
 command_exit = "exit"
 command_add = "add"
-#command_change = "change"
-#command_phone = "phone"
 command_all = "all"
-#command_add_birthday = "add-birthday"
 command_show_birthday = "show-birthday"
 command_birthdays = "birthdays"
 command_add_note = "add-note"
@@ -161,10 +130,7 @@ commands = {
     command_close: "Вийти з проекту",
     command_exit: "Вийти з проекту",
     command_add: "Додати контакт",
-    #command_change: "Змінити контакт",
-    #command_phone: "Змінити номер телефону",
     command_all: "Показати всі контакти",
-    #command_add_birthday: "Додати день народження",
     command_show_birthday: "Показати день народження",
     command_birthdays: "Показати всі дні народження",
     command_add_note: "Додати нотатку",
@@ -208,17 +174,8 @@ def main():
         elif command == command_add:
             print(add_contact(args, book))
 
-        #elif command == command_change:
-        #    print(change_ph(args, book))
-
-        #elif command == command_phone:
-        #    print(user_phone(args, book))
-
         elif command == command_all:
             print(print_all(book))
-
-        #elif command == command_add_birthday:
-        #    print(add_birth(args, book))
 
         elif command == command_show_birthday:
             print(show_birth(args, book))
