@@ -1,6 +1,7 @@
 from address_book import AddressBook
 from record import Record
 from notes import Notes
+from field import Address #щоб можна було умови
 from colorama import Fore, Style, init 
 import pickle
 from prompt_toolkit import prompt
@@ -16,7 +17,7 @@ def load_data(filename="addressbook.pkl"):
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook(), Notes()  # Повернення нової адресної книги та нотатків, якщо файл не знайдено
+        return AddressBook(), Notes() # Повернення нової адресної книги, якщо файл не знайдено
 
 def input_error(func):
     def inner(*args, **kwargs):
@@ -43,8 +44,21 @@ def parse_input(user_input):
     return cmd, *args
 
 @input_error
+def ask_for_address(): # Функція, яка запитує місто і вулицю, перевіряє їх, і повертає коректну адресу
+    while True:
+        print("Вибери місто з дозволених:")
+        Address.print_allowed_cities()  # Виводимо список дозволених міст
+        city = input("Місто: ").strip()
+        street = input("Вулиця з номером (наприклад, Шевченка 10): ").strip()
+        try:
+            return str(Address(city, street))  # Якщо все валідно — повертаємо адресу
+        except ValueError as e:
+            print(f"Помилка: {e}. Спробуй ще раз.")  # Інакше просимо ввести ще раз
+
+@input_error
 def add_contact(args, book):
-    name, phone, birthday, address, email, *_ = args + [None, None, None]
+    name, phone, birthday, email, *_ = args + [None, None, None]
+    address = ask_for_address() 
     record = book.find(name)
     message = "Contact updated."
     if record is None:
@@ -55,38 +69,10 @@ def add_contact(args, book):
     record.add(data)
     return message
 
-"""@input_error
-def change_ph(args, book):
-    name, old_phone, new_phone = args
-    record = book.find(name)
-    if record != None:
-        record.edit_phone(old_phone, new_phone)
-        return "The phone has been replaced"
-    else:    
-        return "Contact does not exist"""
-
-"""@input_error
-def user_phone(args, book):
-    name, *_ = args
-    record = book.find(name)
-    if record != None:
-        return record.phones
-    else:    
-        return "Contact does not exist"""
-
 @input_error
 def print_all(book):
     return book
 
-"""@input_error
-def add_birth(args, book):
-    name, birthday, *_ = args
-    record = book.find(name)
-    if record != None:
-        record.add_birthday(birthday)
-    else:    
-        return "Contact does not exist"
-"""
 @input_error
 def show_birth(args, book):
     name, *_ = args
@@ -139,13 +125,33 @@ def delete_field(args, book):
     
     return message
 
+@input_error
+def find_contact(args, book):
+    field, value, *_ = args
+    result = []
+
+    for record in book:
+        if field == "name" and record.name.value == value:
+            result.append(record)
+        elif field == "phone" and any(ph.value == value for ph in record.phones):
+            result.append(record)
+        elif field == "birthday" and record.birthday and record.birthday.value.strftime("%d.%m.%Y") == value:
+            result.append(record)
+        elif field == "email" and record.email and record.email.value == value:
+            result.append(record)
+        elif field == "address" and record.address and value.lower() in str(record.address).lower():
+            result.append(record)
+
+    if not result:
+        return "Контактів не знайдено"
+    
+    return "\n".join(str(r) for r in result)
+
+
 command_close = "close"
 command_exit = "exit"
 command_add = "add"
-#command_change = "change"
-#command_phone = "phone"
 command_all = "all"
-#command_add_birthday = "add-birthday"
 command_show_birthday = "show-birthday"
 command_birthdays = "birthdays"
 command_add_note = "add-note"
@@ -157,15 +163,13 @@ command_sort_note = "sort-note"
 command_delete = "delete"
 command_edit = "edit"
 command_delete_field = "delete-field"
+command_find = "find"
 
 commands = {
     command_close: "Вийти з проекту",
     command_exit: "Вийти з проекту",
     command_add: "Додати контакт",
-    #command_change: "Змінити контакт",
-    #command_phone: "Змінити номер телефону",
     command_all: "Показати всі контакти",
-    #command_add_birthday: "Додати день народження",
     command_show_birthday: "Показати день народження",
     command_birthdays: "Показати всі дні народження",
     command_add_note: "Додати нотатку",
@@ -177,6 +181,7 @@ commands = {
     command_delete: "Видалити контакт",
     command_edit: "Змінити поля контакту",
     command_delete_field: "Видалення поля контакту"
+    command_find: "Знайти контакт за полем"
 }
 completer = WordCompleter(commands.keys(), ignore_case=True)
 
@@ -210,17 +215,8 @@ def main():
         elif command == command_add:
             print(add_contact(args, book))
 
-        #elif command == command_change:
-        #    print(change_ph(args, book))
-
-        #elif command == command_phone:
-        #    print(user_phone(args, book))
-
         elif command == command_all:
             print(print_all(book))
-
-        #elif command == command_add_birthday:
-        #    print(add_birth(args, book))
 
         elif command == command_show_birthday:
             print(show_birth(args, book))
@@ -233,6 +229,11 @@ def main():
             tags = input("Enter tags separated by commas: ").split(", ")
             notes.add_note(text.strip(), [tag.strip() for tag in tags])
             print("Note added")
+
+        elif command == command_delete_note:
+            index_note = input("Індекс нотатки: ")
+            if index_note.isdigit():
+                print(notes.delete_note(int(index_note)))
 
         elif command == command_show_note:
             for i, note in enumerate(notes.show_all()):
@@ -289,7 +290,11 @@ def main():
             
         else:
             print("Invalid command.")
+        elif command == command_find:
+            print(find_contact(args, book))
         save_data(book, notes)
+       
+
 
 if __name__ == "__main__":
     main()
