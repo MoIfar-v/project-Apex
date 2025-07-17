@@ -121,7 +121,6 @@ def edit_contact(args, book):
     
     if record is None:
         message = "There is no contact named {name}"
-def-edit()
     message = record.edit_contact(field, new_value, old_value)
 
     return message
