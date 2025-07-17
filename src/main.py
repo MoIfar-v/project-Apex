@@ -1,7 +1,7 @@
 from address_book import AddressBook
 from record import Record
 from notes import Notes
-from field import Address #щоб можна було умови
+from fields import Address #щоб можна було умови
 from colorama import Fore, Style, init 
 import pickle
 from prompt_toolkit import prompt
@@ -180,7 +180,7 @@ commands = {
     command_sort_note: "Сортувати нотатки",      
     command_delete: "Видалити контакт",
     command_edit: "Змінити поля контакту",
-    command_delete_field: "Видалення поля контакту"
+    command_delete_field: "Видалення поля контакту",
     command_find: "Знайти контакт за полем"
 }
 completer = WordCompleter(commands.keys(), ignore_case=True)
@@ -288,13 +288,12 @@ def main():
         elif command == command_delete_field:
             print(delete_field(args, book))
             
-        else:
-            print("Invalid command.")
         elif command == command_find:
             print(find_contact(args, book))
+        else:
+            print("Invalid command.")
+        
         save_data(book, notes)
-       
-
 
 if __name__ == "__main__":
     main()
