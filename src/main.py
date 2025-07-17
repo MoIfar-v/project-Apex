@@ -159,6 +159,7 @@ command_delete_note = "delete-note"
 command_show_note = "show-note"
 command_search_note = "search-note"
 command_edit_note = "edit-note"
+command_sort_note = "sort-note"
 command_delete = "delete"
 command_edit = "edit"
 command_delete_field = "delete-field"
@@ -176,6 +177,7 @@ commands = {
     command_show_note: "Показати усі нотатки",
     command_search_note: "Знайти нотатку",
     command_edit_note: "Редагувати нотатку",      
+    command_sort_note: "Сортувати нотатки",      
     command_delete: "Видалити контакт",
     command_edit: "Змінити поля контакту",
     command_delete_field: "Видалення поля контакту"
@@ -196,8 +198,8 @@ def print_all_commands():
     print(horizontal_line)
 
 def main():
-    book, notes= load_data()
-    print("Welcome to the assistant bot!")
+    book, notes = load_data()
+    print(f"\n 📌 Welcome to the assistant bot!")
     print_all_commands()
     while True:
         user_input = prompt("Enter a command: ", completer=completer)
@@ -224,8 +226,8 @@ def main():
 
         elif command == command_add_note:
             text = input("Enter note text: ")
-            tags = input("Enter tags separated by commas: ").split(",")
-            notes.add_note(text.strip(), tags)
+            tags = input("Enter tags separated by commas: ").split(", ")
+            notes.add_note(text.strip(), [tag.strip() for tag in tags])
             print("Note added")
 
         elif command == command_delete_note:
@@ -265,7 +267,17 @@ def main():
                 else:
                     print("Index invalid")
             except:
-                raise NotesIndexNotValid()                                 
+                raise NotesIndexNotValid()
+
+        elif command == command_sort_note:
+            tag_map = notes.group_by_tag()
+            if not tag_map:
+                print("No notes with tags")
+            else:
+                for tag, notes_list in tag_map.items():
+                    print(f"\n#{tag}:")
+                    for note in notes_list:
+                        print(f"    - {note}")                                             
             
         elif command == command_delete:
             print(delete_contact(args, book))
