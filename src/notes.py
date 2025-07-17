@@ -19,16 +19,22 @@ class Notes:
 
     def delete_note(self, index):
         if 0 <= index < len(self.notes):
+            print("Ця нотатка буде видалена: ",str(self.notes[index]))
             del self.notes[index]
-            return "Нотатку видалено"
-        return "Індекс недійсний"
+            return "Note deleted"
+        return "Index invalid"
 
     def edit_note(self, index, new_text):
+        g = len(self.notes)
         if 0 <= index < len(self.notes):
-            print(f"Нотатка, що редагується: {self.notes[index].text}")
+            print(f"Editable note: {self.notes[index].text}")
             self.notes[index].text = new_text
-            return "Нотатку оновлено"
-        return "Індекс недійсний"
+            return "Note updated"
+        return "Index invalid"
+    
+    def len_notes(self):
+        k = len(self.notes)
+        return k
 
     def show_all(self):
         return [str(note) for note in self.notes]
