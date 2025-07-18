@@ -248,7 +248,7 @@ def main():
             print("Note added")
 
         elif command == command_delete_note:
-            index_note = input("Індекс нотатки: ")
+            index_note = input("Index of notes: ")
             if index_note.isdigit():
                 print(notes.delete_note(int(index_note)))
 
