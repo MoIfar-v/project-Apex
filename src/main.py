@@ -8,16 +8,27 @@ from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 from exceptions import BirthdayParamNotValid, NotesIndexNotValid
 
-def save_data(book, notes, filename="addressbook.pkl"):
+def save_addressbook(book, filename="addressbook.pkl"):
     with open(filename, "wb") as f:
-        pickle.dump((book, notes), f)
+        pickle.dump(book, f)
 
-def load_data(filename="addressbook.pkl"):
+def load_addressbook(filename="addressbook.pkl"):
     try:
         with open(filename, "rb") as f:
             return pickle.load(f)
     except FileNotFoundError:
-        return AddressBook(), Notes() # Повернення нової адресної книги, якщо файл не знайдено
+        return AddressBook()
+    
+def save_notes(notes, filename="notes.pkl"):
+    with open(filename, "wb") as f:
+        pickle.dump((notes), f)
+
+def load_notes(filename="notes.pkl"):
+    try:
+        with open(filename, "rb") as f:
+            return pickle.load(f)
+    except FileNotFoundError:
+        return Notes()
 
 def input_error(func):
     def inner(*args, **kwargs):
@@ -44,21 +55,24 @@ def parse_input(user_input):
     return cmd, *args
 
 @input_error
-def ask_for_address(): # Функція, яка запитує місто і вулицю, перевіряє їх, і повертає коректну адресу
+def ask_for_address(args, book): # Функція, яка запитує місто і вулицю, перевіряє їх, і повертає коректну адресу
+    name, *_ = args
+    record = book.find(name)
     while True:
         print("Вибери місто з дозволених:")
         Address.print_allowed_cities()  # Виводимо список дозволених міст
         city = input("Місто: ").strip()
         street = input("Вулиця з номером (наприклад, Шевченка 10): ").strip()
         try:
-            return str(Address(city, street))  # Якщо все валідно — повертаємо адресу
+            record.address = Address(city, street)
+            break
+            #return str(Address(city, street))  # Якщо все валідно — повертаємо адресу
         except ValueError as e:
             print(f"Помилка: {e}. Спробуй ще раз.")  # Інакше просимо ввести ще раз
 
 @input_error
 def add_contact(args, book):
-    name, phone, birthday, email, *_ = args + [None, None, None]
-    address = ask_for_address() 
+    name, phone, birthday, address, email, *_ = args + [None, None, None]
     record = book.find(name)
     message = "Contact updated."
     if record is None:
@@ -164,6 +178,7 @@ command_delete = "delete"
 command_edit = "edit"
 command_delete_field = "delete-field"
 command_find = "find"
+command_add_address = "add-address"
 
 commands = {
     command_close: "Вийти з проекту",
@@ -181,7 +196,8 @@ commands = {
     command_delete: "Видалити контакт",
     command_edit: "Змінити поля контакту",
     command_delete_field: "Видалення поля контакту",
-    command_find: "Знайти контакт за полем"
+    command_find: "Знайти контакт за полем",
+    command_add_address: "Додати адресу"
 }
 completer = WordCompleter(commands.keys(), ignore_case=True)
 
@@ -198,7 +214,8 @@ def print_all_commands():
     print(horizontal_line)
 
 def main():
-    book, notes = load_data()
+    book =  load_addressbook()
+    notes = load_notes()
     print(f"\n 📌 Welcome to the assistant bot!")
     print_all_commands()
     while True:
@@ -290,10 +307,13 @@ def main():
             
         elif command == command_find:
             print(find_contact(args, book))
+        elif command == command_add_address:
+            ask_for_address(args, book)
         else:
             print("Invalid command.")
         
-        save_data(book, notes)
+        save_addressbook(book)
+        save_notes(notes)
 
 if __name__ == "__main__":
     main()
