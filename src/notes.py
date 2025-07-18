@@ -18,18 +18,22 @@ class Notes:
         self.notes.append(Note(text, tags))
 
     def search_note(self, keyword):
-        return [note for note in self.notes if keyword.lower() in note.text.lower().split(" ") or keyword.lower() in note.tags.split(", ").strip()]
+        return [note for note in self.notes if keyword.lower() in note.text.lower().split(" ") or keyword.lower() in note.tags]
 
     def delete_note(self, index):
-        print("Ця нотатка буде видалена: ", str(self.notes[index]))
-        del self.notes[index]
-        return "Note deleted"
+        if 0 <= index < len(self.notes):
+            print("This note will be deleted: ", str(self.notes[index]))
+            del self.notes[index]
+            return "Note deleted"
+        return "Index invalid"
 
     def edit_note(self, index, new_text):
-        g = len(self.notes)
-        print(f"Editable note: {self.notes[index].text}")
-        self.notes[index].text = new_text
-        return "Note updated"
+        if 0 <= index < len(self.notes):
+            g = len(self.notes)
+            print(f"Editable note: {self.notes[index].text}")
+            self.notes[index].text = new_text
+            return "Note updated"
+        return "Index invalid"
 
     def show_all(self):
         return [str(note) for note in self.notes]
