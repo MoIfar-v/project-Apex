@@ -163,43 +163,36 @@ def find_contact(args, book):
     
     return "\n".join(str(r) for r in result)
 
-def print_notes(notes_list):
+def print_notes(notes_list):        # Табличний вивід нотаток
     delim = " | "
     title1, title2, title3 = 'Index', 'Notes', 'Tags'
-    index_width = max(len(notes_list), len(title1))
-    l = []
-    for note in notes_list:
-        l.append(len(note[0]))
-    max_notes_width = max(l) + 2    
-    for note in notes_list:
-        tags = note[1]
-        tags_str = ", ".join(tags)
-        l.append(len(tags_str))
-    max_tags_width = max(max(l), len(title3))  
+    index_width = max(len(notes_list), len(title1))     # Вирахування ширини стовбця Індекс
+    max_notes_width = max(max([len(note[1]) for note in notes_list]), len(title2))      # Вирахування ширини стовбця Текст нотатки
+    max_tags_width = max(max(len(", ".join(note[2])) for note in notes_list), len(title3))      # Вирахування ширини стовбця Теги до нотатків
     horizontal_line = "-" * (index_width + max_notes_width + len(delim)*2 + max_tags_width)
     print(horizontal_line)
     print(f"{title1:<{index_width}}{delim}{title2:<{max_notes_width}}{delim}{title3}")
     print(horizontal_line)
-    for idx, note in enumerate(notes_list):
-        print(f"{Fore.YELLOW}{idx:<{index_width}}{Style.RESET_ALL}{delim}{note[0]:<{max_notes_width}}{delim}{Fore.GREEN}{", ".join(note[1])}{Style.RESET_ALL}")
+    for note in notes_list:     # Вивід рядків таблиці нотатків
+        print(f"{Fore.YELLOW}{note[0]:<{index_width}}{Style.RESET_ALL}{delim}{note[1]:<{max_notes_width}}{delim}{Fore.GREEN}{", ".join(note[2])}{Style.RESET_ALL}")        
     print(horizontal_line)
 
 @input_error
-def add_note(notes):
+def add_note(notes):        # Додавання нотатки
     message = "Note is empty and not added"
     text = input("Enter note text: ")
     tags = input("Enter tags separated by commas: ").split(", ")
     if text:
-        notes.add_note(text.strip(), [tag.strip() for tag in tags])
+        notes.add_note(text.strip(), [tag.strip() for tag in tags])     # Додавання нотатки
         message = "Note added"
     return message
 
 @input_error
-def delete_note(notes):
+def delete_note(notes):     # Видалення нотатки за індексом
     index_note = input("Index of notes: ")
     try: 
         if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
-            notes.delete_note(int(index_note))
+            notes.delete_note(int(index_note))     # Видалення нотатки
             message = "Note deleted"
         else:
             message = "Index invalid"
@@ -208,10 +201,10 @@ def delete_note(notes):
     return message
 
 @input_error
-def search_note(notes):
+def search_note(notes):     # Пошук нотатків за ключевим словом у тексті нотатки або тегах
     message = ""
     key = input("Keyword or tag: ")
-    matches = notes.search_note(key)
+    matches = notes.search_note(key)     # Формування списку нотатків, що відповідають ключевому слову
     if matches:
         print_notes(matches)
     else:
@@ -219,7 +212,7 @@ def search_note(notes):
     return message
 
 @input_error
-def show_note(notes):
+def show_note(notes):       # Вивід усіх нотатків
     message = "Nothing found"
     matches = notes.show_all()
     if matches:
@@ -228,7 +221,7 @@ def show_note(notes):
     return message
 
 @input_error
-def edit_note(notes):
+def edit_note(notes):       # Редагування ноатків за індексом
     index_note = input("Index of notes: ")
     try: 
         if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
@@ -242,12 +235,12 @@ def edit_note(notes):
     return message
 
 @input_error
-def sort_note(notes):
+def sort_note(notes):       # Сортування нотатків за тегами
     message = "No notes with tags"
     tag_map = notes.group_by_tag()
     if tag_map:
         for tag, notes_list in tag_map.items():
-            print(f"\n#{tag}:")
+            print(f"\n{tag}:")
             for note in notes_list:
                 print(f"    - {note}")       
         message = ""    
