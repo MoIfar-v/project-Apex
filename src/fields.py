@@ -59,36 +59,47 @@ class Email(Field):
             raise ValueError("Invalid email format.")
 
 class Address(Field):
-    allowed_cities = ["Київ", "Львів", "Одеса", "Харків", "Дніпро"]  # Static list of allowed cities
-
-    def __init__(self, city, street):
-        self.city = city
+    def __init__(self, city, street):  # Нормалізуємо назву міста та вулиці
+        self.city = self.normalize_city(city)
         self.street = self.normalize_street(street)
-        # Store full address as the value
-        super().__init__(f"{self.city}, {self.street}")
+
         self.validate()
-   
+        
+        super().__init__(f"{self.city}, {self.street}")
+
+    def normalize_city(self, city):
+        # Обрізаємо зайві пробіли та приводимо місто до правильного формату (перша літера велика)
+        return city.strip().title()
+
     def normalize_street(self, street):
+        # Обрізаємо зайві пробіли
         street = street.strip()
+
+        # Якщо вулиця не починається з "вул.", додаємо це
         if not street.lower().startswith("вул."):
-            street = "вул. " + street  # Format the street: trim whitespace and add "вул." if missing
+            street = "вул. " + street
+
         return street
 
-    def validate(self):    # Validate city and street formatting
-        if self.city not in self.allowed_cities:
-            raise ValueError(f"City '{self.city}' is not allowed. Choose from: {', '.join(self.allowed_cities)}")
+    def validate(self):
+        # Перевіряємо, що місто є рядком і не порожнє
+        if not self.city or not isinstance(self.city, str):
+            raise ValueError("Місто має бути непорожнім рядком.")
 
-        if not isinstance(self.street, str):
-            raise ValueError("Street name must be a string.")
+        # Перевіряємо, що назва вулиці достатньо довга
+        if not isinstance(self.street, str) or len(self.street.strip()) < 5:
+            raise ValueError("Назва вулиці надто коротка.")
 
-        if len(self.street.strip()) < 5:
-            raise ValueError("Street name is too short.")
-
+        # Перевіряємо, що у назві вулиці вказаний номер будинку
         if not any(char.isdigit() for char in self.street):
-            raise ValueError("Street must contain a house number.")
+            raise ValueError("У вулиці має бути вказаний номер будинку.")
 
-    def __str__(self):   # Return formatted address string
+    def __str__(self):
+        # Повертаємо повну адресу у вигляді одного рядка
         return f"{self.city}, {self.street}"
+
+   
+ 
 
     
     @staticmethod
