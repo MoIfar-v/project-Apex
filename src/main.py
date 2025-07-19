@@ -1,7 +1,6 @@
 from address_book import AddressBook
 from record import Record
 from notes import Notes
-from fields import Address #щоб можна було умови
 from colorama import Fore, Style, init 
 import pickle
 from prompt_toolkit import prompt
@@ -55,20 +54,23 @@ def parse_input(user_input):
     return cmd, *args
 
 @input_error
-def ask_for_address(args, book): # Функція, яка запитує місто і вулицю, перевіряє їх, і повертає коректну адресу
+def ask_for_address(args, book): 
     name, *_ = args
     record = book.find(name)
+    if not record:
+        return f"Контакт із іменем '{name}' не знайдено"
+
     while True:
-        print("Вибери місто з дозволених:")
-        Address.print_allowed_cities()  # Виводимо список дозволених міст
-        city = input("Місто: ").strip()
-        street = input("Вулиця з номером (наприклад, Шевченка 10): ").strip()
+        address_input = input("Введи адресу у форматі: Місто, вулиця з номером (наприклад, Київ, Шевченка 10): ").strip()
         try:
+            if ',' not in address_input:
+                raise ValueError("Адреса має містити місто та вулицю, розділені комою.")
+            city, street = map(str.strip, address_input.split(',', 1))
             record.address = Address(city, street)
-            break
-            #return str(Address(city, street))  # Якщо все валідно — повертаємо адресу
+            return f"Адресу для {name} оновлено: {record.address}"
         except ValueError as e:
-            print(f"Помилка: {e}. Спробуй ще раз.")  # Інакше просимо ввести ще раз
+            print(f"Помилка: {e}. Спробуй ще раз.")
+
 
 @input_error
 def add_contact(args, book):
