@@ -161,6 +161,107 @@ def find_contact(args, book):
     
     return "\n".join(str(r) for r in result)
 
+def print_notes(notes_list):
+    delim = " | "
+    title1, title2, title3 = 'Index', 'Notes', 'Tags'
+    index_width = max(len(notes_list), len(title1))
+    l = []
+    for note in notes_list:
+        l.append(len(note[0]))
+    max_notes_width = max(l) + 2    
+    for note in notes_list:
+        tags = note[1]
+        tags_str = ", ".join(tags)
+        l.append(len(tags_str))
+    max_tags_width = max(max(l), len(title3))  
+    horizontal_line = "-" * (index_width + max_notes_width + len(delim)*2 + max_tags_width)
+    print(horizontal_line)
+    print(f"{title1:<{index_width}}{delim}{title2:<{max_notes_width}}{delim}{title3}")
+    print(horizontal_line)
+    for idx, note in enumerate(notes_list):
+        print(f"{Fore.YELLOW}{idx:<{index_width}}{Style.RESET_ALL}{delim}{note[0]:<{max_notes_width}}{delim}{Fore.GREEN}{", ".join(note[1])}{Style.RESET_ALL}")
+    print(horizontal_line)
+
+@input_error
+def add_note(notes):
+    message = "Note is empty and not added"
+    text = input("Enter note text: ")
+    tags = input("Enter tags separated by commas: ").split(", ")
+    if text:
+        notes.add_note(text.strip(), [tag.strip() for tag in tags])
+        message = "Note added"
+    return message
+
+@input_error
+def delete_note(notes):
+    index_note = input("Index of notes: ")
+    try: 
+        if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
+            notes.delete_note(int(index_note))
+            message = "Note deleted"
+        else:
+            message = "Index invalid"
+    except:
+        raise NotesIndexNotValid()
+    return message
+
+@input_error
+def search_note(notes):
+    message = ""
+    key = input("Keyword or tag: ")
+    matches = notes.search_note(key)
+    if matches:
+        print_notes(matches)
+    else:
+        message = "Nothing found"
+    return message
+
+@input_error
+def show_note(notes):
+    message = "Nothing found"
+    matches = notes.show_all()
+    if matches:
+        print_notes(matches)
+        message = ""    
+    return message
+
+@input_error
+def edit_note(notes):
+    index_note = input("Index of notes: ")
+    try: 
+        if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
+            new_text = input("New text: ")
+            notes.edit_note(int(index_note), new_text)
+            message = "Note updated"
+        else:
+            message = "Index invalid"
+    except:
+        raise NotesIndexNotValid()
+    return message
+
+@input_error
+def sort_note(notes):
+    message = "No notes with tags"
+    tag_map = notes.group_by_tag()
+    if tag_map:
+        for tag, notes_list in tag_map.items():
+            print(f"\n#{tag}:")
+            for note in notes_list:
+                print(f"    - {note}")       
+        message = ""    
+    return message
+
+def print_all_commands():
+    delim = " | "
+    max_key_width = max(len(cmd) for cmd in commands.keys())
+    max_value_width = max(len(cmd) for cmd in commands.values())
+    horizontal_line = "-" * (max_key_width + max_value_width + len(delim))
+    print(horizontal_line)
+    print(f"{'Command':<{max_key_width}}{delim}Description")
+    print(horizontal_line)
+    for cmd, desc in commands.items():
+        print(f"{Fore.YELLOW}{cmd:<{max_key_width}}{Style.RESET_ALL}{delim}{desc}")
+    print(horizontal_line)
 
 command_close = "close"
 command_exit = "exit"
@@ -201,18 +302,6 @@ commands = {
 }
 completer = WordCompleter(commands.keys(), ignore_case=True)
 
-def print_all_commands():
-    delim = " | "
-    max_key_width = max(len(cmd) for cmd in commands.keys())
-    max_value_width = max(len(cmd) for cmd in commands.values())
-    horizontal_line = "-" * (max_key_width + max_value_width + len(delim))
-    print(horizontal_line)
-    print(f"{'Command':<{max_key_width}}{delim}Description")
-    print(horizontal_line)
-    for cmd, desc in commands.items():
-        print(f"{Fore.YELLOW}{cmd:<{max_key_width}}{Style.RESET_ALL}{delim}{desc}")
-    print(horizontal_line)
-
 def main():
     book =  load_addressbook()
     notes = load_notes()
@@ -242,59 +331,22 @@ def main():
             print(all_birthdays(args, book))
 
         elif command == command_add_note:
-            text = input("Enter note text: ")
-            tags = input("Enter tags separated by commas: ").split(", ")
-            notes.add_note(text.strip(), [tag.strip() for tag in tags])
-            print("Note added")
-
-        elif command == command_delete_note:
-            index_note = input("Index of notes: ")
-            if index_note.isdigit():
-                print(notes.delete_note(int(index_note)))
+            print(add_note(notes))
 
         elif command == command_show_note:
-            for i, note in enumerate(notes.show_all()):
-                print(f"{i}: {note}")
+            print(show_note(notes))
 
         elif command == command_search_note:
-            key = input("Keyword or tag: ")
-            matches = notes.search_note(key)
-            if matches:
-                for i, note in enumerate(matches):
-                    print(f"{i}: {note}")
-            else:
-                print("Nothing found")
+            print(search_note(notes))
 
         elif command == command_delete_note:
-            index_note = input("Index of notes: ")
-            try: 
-                if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
-                    print(notes.delete_note(int(index_note)))
-                else:
-                    print("Index invalid")
-            except:
-                raise NotesIndexNotValid()
+            print(delete_note(notes))
 
         elif command == command_edit_note:
-            index_note = input("Index of notes: ")
-            try: 
-                if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
-                    new_text = input("New text: ")
-                    print(notes.edit_note(int(index_note), new_text)) 
-                else:
-                    print("Index invalid")
-            except:
-                raise NotesIndexNotValid()
+            print(edit_note(notes))
 
         elif command == command_sort_note:
-            tag_map = notes.group_by_tag()
-            if not tag_map:
-                print("No notes with tags")
-            else:
-                for tag, notes_list in tag_map.items():
-                    print(f"\n#{tag}:")
-                    for note in notes_list:
-                        print(f"    - {note}")                                             
+            print(sort_note(notes))
             
         elif command == command_delete:
             print(delete_contact(args, book))
@@ -307,8 +359,10 @@ def main():
             
         elif command == command_find:
             print(find_contact(args, book))
+
         elif command == command_add_address:
             ask_for_address(args, book)
+
         else:
             print("Invalid command.")
         
