@@ -41,22 +41,6 @@ class Record:
         except ValueError:
             print(f"Contact {self.name} does not have the number {phone}.")
     
-    """def edit_phone(self, old_phone, new_phone):
-        self.phones.remove(old_phone)
-        self.phones.append(new_phone)"""
-    
-    """def delete_phone(self):
-        self.phones.clear()
-        return print(f"All contact phone numbers for {self.name} have been deleted.")"""
-    
-    """def add_birthday(self, birthday):
-        self.birthday = fields.Birthday(birthday)
-        return print("Birthday added.")
-    
-    def add_email(self, email):
-        self.birthday = fields.Email(email)
-        return print("Email додано.")"""
-    
     def edit_contact(self, field, new_value, old_value):
         """Функція змінює поточне значення поля контакту та задає нове якщо значення поля = None
 
