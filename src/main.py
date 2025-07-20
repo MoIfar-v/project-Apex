@@ -74,6 +74,7 @@ def ask_for_address(args, book):
 
 @input_error
 def add_contact(args, book):
+    #не перезаписувати контакт при повторному додаванні
     name, phone, birthday, address, email, *_ = args + [None, None, None]
     record = book.find(name)
     message = "Contact updated."
@@ -87,8 +88,23 @@ def add_contact(args, book):
 
 @input_error
 def print_all(book):
-    return book
-
+    head_color = "\33[1;97;100m"
+    end_color = "\33[0m"
+    spacer = f"{head_color}{"":^20}|{"":^25}|{"":^25}|{"":^35}|{"":^25}{end_color}"
+    head = f"{head_color}{"Name":^20}|{"Phones":^25}|{"Birthday":^25}|{"Address":^35}|{"Email":^25}{end_color}"
+    
+    print(spacer)
+    print(head)
+    print(spacer)
+    
+    for record in book.data:
+        body_color = "\33[1;97;42m"
+        if book.index(record) % 2 == 0:
+            body_color = "\33[1;97;43m"
+        body = f"{body_color}{str(record.name):^20}|{'; '.join(p for p in record.phones):^25}|{str(record.birthday):^25}|{str(record.address):^35}|{str(record.email):^25}{end_color}"
+        print(body)
+    print("Done")
+        
 @input_error
 def show_birth(args, book):
     name, *_ = args
@@ -317,7 +333,7 @@ def main():
             print(add_contact(args, book))
 
         elif command == command_all:
-            print(print_all(book))
+            print_all(book)
 
         elif command == command_show_birthday:
             print(show_birth(args, book))
