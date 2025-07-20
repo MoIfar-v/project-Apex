@@ -66,16 +66,17 @@ def add_contact(args, book):
     Returns:
         str: повідомлення користувачу
     """
-    #не перезаписувати контакт при повторному додаванні
     name, phone, birthday, address, email, *_ = args + [None, None, None]
     record = book.find(name)
-    message = "Contact updated."
     if record is None:
         record = Record(name)
+        data = [phone, birthday, address, email]
+        record.add(data)
         book.add_record(record)
         message = "Contact added."
-    data = [phone, birthday, address, email]
-    record.add(data)
+    else:
+        message = "Contact already exists."
+    
     return message
 
 @input_error
@@ -96,11 +97,21 @@ def print_all(book):
     
     for record in book.data:
         body_color = "\33[1;97;42m"
+        birthday =  record.birthday
+        address = record.address
+        email = record.email
+        
+        if birthday is None:
+            birthday = ""
+        if address is None:
+            address = ""
+        if email is None:
+            email = ""
+            
         if book.index(record) % 2 == 0:
             body_color = "\33[1;97;43m"
-        body = f"{body_color}{str(record.name):^20}|{'; '.join(p for p in record.phones):^25}|{str(record.birthday):^25}|{str(record.address):^35}|{str(record.email):^25}{end_color}"
+        body = f"{body_color}{str(record.name):^20}|{'; '.join(p for p in record.phones):^25}|{str(birthday):^25}|{str(address):^35}|{str(email):^25}{end_color}"
         print(body)
-    print("Done")
         
 @input_error
 def show_birth(args, book):
@@ -176,6 +187,9 @@ def edit_contact(args, book):
     
     if record is None:
         message = "There is no contact named {name}"
+        
+    if field == 'address':
+        new_value = " ".join(p for p in args[-3:])
     message = record.edit_contact(field, new_value, old_value)
 
     return message
@@ -206,16 +220,18 @@ def delete_field(args, book):
 
 @input_error
 def find_contact(args, book):
-    """_summary_
+    """Функція повертає запис контакта по його ім'ю та шеканому полю
+    Приклади команд: find name Bob
+                     find phone 3445566778
 
     Args:
-        args (_type_): _description_
-        book (_type_): _description_
+        args (name:str, field: str): name - ім'я контакта, field - поле для пошуку
+        book (AddressBook()): Зберігає нові поля адресної книги
 
     Returns:
-        _type_: _description_
+        str: повідомлення коричтувачу, або знайдений контакт
     """
-    field, value, *_ = args
+    field, value, *_ = args +[None, ]
     result = []
 
     for record in book:
@@ -223,7 +239,7 @@ def find_contact(args, book):
             result.append(record)
         elif field == "phone" and any(ph.value == value for ph in record.phones):
             result.append(record)
-        elif field == "birthday" and record.birthday and record.birthday.value.strftime("%d.%m.%Y") == value:
+        elif field == "birthday" and record.birthday and record.birthday.value.strftime("%Y-%m-%d") == value:
             result.append(record)
         elif field == "email" and record.email and record.email.value == value:
             result.append(record)

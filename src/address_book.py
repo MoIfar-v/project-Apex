@@ -5,7 +5,8 @@ class AddressBook(UserList):
     def add_record(self, contact):
         self.append(contact)
     
-    def find(self, name):
+    def find(self, args):
+        name, *_ = args
         try:
             for record in self.data:
                 if record.name.value == name:
