@@ -37,15 +37,15 @@ class Notes:        # Класс для зберігання нотатків
             note.insert(0,idx)
         return list
        
-        def group_by_tag(self):     # функція для сортування нотатків за тегами
-            tag_map = {}
-            list_tags = []        
-            for note in self.notes:          # формування списку усіх тегів
-                list_tags += note.tags
-            tags_list = list(set([tag.strip() for tag in list_tags]))       # формування списку унікальних тегів для всіх нотатків
-            tags_list.sort()        # сортування усіх тегів у списку
-            for tag in tags_list:       # формування словника нотатків під усі теги
-                for note in self.notes:
-                    if tag in note.tags:
-                        tag_map.setdefault(tag.strip().lower(), []).append(note)
-            return tag_map   
+    def group_by_tag(self):     # функція для сортування нотатків за тегами
+        tag_map = {}
+        list_tags = []        
+        for note in self.notes:          # формування списку усіх тегів
+            list_tags += note.tags
+        tags_list = list(set([tag.strip() for tag in list_tags]))       # формування списку унікальних тегів для всіх нотатків
+        tags_list.sort()        # сортування усіх тегів у списку
+        for tag in tags_list:       # формування словника нотатків під усі теги
+            for note in self.notes:
+                if tag in note.tags:
+                    tag_map.setdefault(tag.strip().lower(), []).append(note)
+        return tag_map   

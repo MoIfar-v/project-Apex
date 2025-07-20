@@ -174,7 +174,7 @@ def print_notes(notes_list):        # Табличний вивід нотато
     print(f"{title1:<{index_width}}{delim}{title2:<{max_notes_width}}{delim}{title3}")
     print(horizontal_line)
     for note in notes_list:     # Вивід рядків таблиці нотатків
-        print(f"{Fore.YELLOW}{note[0]:<{index_width}}{Style.RESET_ALL}{delim}{note[1]:<{max_notes_width}}{delim}{Fore.GREEN}{", ".join(note[2])}{Style.RESET_ALL}")        
+        print(f"{Fore.YELLOW}{note[0]:<{index_width}}{Style.RESET_ALL}{delim}{note[1]:<{max_notes_width}}{delim}{Fore.GREEN}{', '.join(note[2])}{Style.RESET_ALL}")        
     print(horizontal_line)
 
 @input_error
