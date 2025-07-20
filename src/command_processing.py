@@ -246,9 +246,9 @@ def print_notes(notes_list):        # Табличний вивід нотато
     index_width = max(len(notes_list), len(title1))     # Вирахування ширини стовбця Індекс
     max_notes_width = max(max([len(note[1]) for note in notes_list]), len(title2))      # Вирахування ширини стовбця Текст нотатки
     max_tags_width = max(max(len(", ".join(note[2])) for note in notes_list), len(title3))      # Вирахування ширини стовбця Теги до нотатків
-    horizontal_line = "-" * (index_width + max_notes_width + len(delim)*2 + max_tags_width)
+    horizontal_line = "-" * (index_width + max_notes_width + len(delim)*2 + max_tags_width)     # Формування горизонтальної лінії для таблиці
     print(horizontal_line)
-    print(f"{title1:<{index_width}}{delim}{title2:<{max_notes_width}}{delim}{title3}")
+    print(f"{title1:<{index_width}}{delim}{title2:<{max_notes_width}}{delim}{title3}")      # Друк шапки таблиці
     print(horizontal_line)
     for note in notes_list:     # Вивід рядків таблиці нотатків
         print(f"{Fore.YELLOW}{note[0]:<{index_width}}{Style.RESET_ALL}{delim}{note[1]:<{max_notes_width}}{delim}{Fore.GREEN}{', '.join(note[2])}{Style.RESET_ALL}")        
@@ -267,7 +267,7 @@ def add_note(notes):        # Додавання нотатки
     message = "Note is empty and not added"
     text = input("Enter note text: ")
     tags = input("Enter tags separated by commas: ").split(", ")
-    if text:
+    if text:        # Якщо текст нотатки не порожній, то зберігаємо нотатку
         notes.add_note(text.strip(), [tag.strip() for tag in tags])     # Додавання нотатки
         message = "Note added"
     return message
@@ -287,13 +287,13 @@ def delete_note(notes):     # Видалення нотатки за індек�
     """
     index_note = input("Index of notes: ")
     try: 
-        if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
+        if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):     # якщо введений рядок складається із цифр та число є валідним кількості нотатків в нотатнику, то викликається метод класу для видалення нотатки з введеним індексом
             notes.delete_note(int(index_note))     # Видалення нотатки
             message = "Note deleted"
         else:
             message = "Index invalid"
     except:
-        raise NotesIndexNotValid()
+        raise NotesIndexNotValid()      # обробка виключення
     return message
 
 @input_error
@@ -326,9 +326,9 @@ def show_note(notes):       # Вивід усіх нотатків
         _type_: _description_
     """
     message = "Nothing found"
-    matches = notes.show_all()
+    matches = notes.show_all()      # викликається метод класу для формування списку усіх нотатків
     if matches:
-        print_notes(matches)
+        print_notes(matches)        # викликається функція для виводу нотатків в табличному виді 
         message = ""    
     return message
 
@@ -347,14 +347,14 @@ def edit_note(notes):       # Редагування ноатків за інд�
     """
     index_note = input("Index of notes: ")
     try: 
-        if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
+        if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):     # якщо введений рядок складається із цифр та число є валідним кількості нотатків в нотатнику, то викликається метод класу для редагування нотатки з введеним індексом
             new_text = input("New text: ")
-            notes.edit_note(int(index_note), new_text)
+            notes.edit_note(int(index_note), new_text)      # викликається метод класу для редагування нотатки з введеним індексом та новим текстом
             message = "Note updated"
         else:
             message = "Index invalid"
     except:
-        raise NotesIndexNotValid()
+        raise NotesIndexNotValid()      # обробка виключення
     return message
 
 @input_error
@@ -368,12 +368,12 @@ def sort_note(notes):       # Сортування нотатків за тег�
         _type_: _description_
     """
     message = "No notes with tags"
-    tag_map = notes.group_by_tag()
-    if tag_map:
-        for tag, notes_list in tag_map.items():
-            print(f"\n{tag}:")
-            for note in notes_list:
-                print(f"    - {note}")       
+    tag_map = notes.group_by_tag()      # викликається метод класу для отримання словника з группованими та сортированими нотатками
+    if tag_map:     # якщо словник не порожній 
+        for tag, notes_list in tag_map.items():     # перебираємо словник 
+            print(f"\n{tag}:")      # виводимо тег за яким згрупповані нотатки 
+            for note in notes_list:     # перебираємо список нотатків для виводу на екран 
+                print(f"    - {note}")       # виводимо нотатку на екран 
         message = ""    
     return message
 
