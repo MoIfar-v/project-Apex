@@ -48,6 +48,24 @@ def ask_for_address(args, book):
 
 @input_error
 def add_contact(args, book):
+    """Функція додає до адресної книги типу AddressBook() новий елемент типу Record()
+        Поля name, phones - обов'язкові, всі інші можна пропустити ввівши довільну кількість символу "_",
+        або повністю проігнорувати останні 3 поля
+        
+        Приклади команд: add Jane 2342342345 12.06.1985 Київ, Шевченка 10 rthrthr@gmail.com
+                         Bob 3454534534 04.12.1993 ____ tgtgt@ggg.com - пропуск одного з полів 
+                         add John 9379992222 
+                         add Victor 2342342356 ____ ____ wdedw@gmail.com
+
+    Args:
+        args (name: Name(), phone: Phone(), birthday: Birhtday(), address: Address, email: Email()): список аргументів в 
+        заданому порядку name, phone, birthday, address, email, при ігноруванні останніх полів 
+        (одного або декілька) встановлює значення None
+        book (AddressBook()): Зберігає нові поля адресної книги
+
+    Returns:
+        str: повідомлення користувачу
+    """
     #не перезаписувати контакт при повторному додаванні
     name, phone, birthday, address, email, *_ = args + [None, None, None]
     record = book.find(name)
@@ -62,6 +80,11 @@ def add_contact(args, book):
 
 @input_error
 def print_all(book):
+    """Функція виводить у консоль форматовану таблицю всих контактів
+
+    Args:
+        book (AddressBook()): Зберігає нові поля адресної книги
+    """
     head_color = "\33[1;97;100m"
     end_color = "\33[0m"
     spacer = f"{head_color}{"":^20}|{"":^25}|{"":^25}|{"":^35}|{"":^25}{end_color}"
@@ -81,11 +104,33 @@ def print_all(book):
         
 @input_error
 def show_birth(args, book):
+    """Функція виводить дату народження контакту з ім'ям name
+
+    Args:
+        args (name: Name()): ім'я контакту 
+        book (AddressBook()): Зберігає нові поля адресної книги
+
+    Returns:
+        datatime: дата народження
+    """
     name, *_ = args
     return book.show_birthday(name)
 
 @input_error    
 def all_birthdays(args, book):
+    """Функція виводить у консоль дати народження всих контактів до 
+    поточноъ дати + кількість днів встановленої користувачем
+
+    Args:
+        args (days_forward: int): кількість днів 
+        book (AddressBook()): Зберігає нові поля адресної книги
+
+    Raises:
+        BirthdayParamNotValid: просить ввести кількість днів
+
+    Returns:
+        Record(): виводить контакти які підпадають під інтервал
+    """
     try: 
         days_forward, *_ = args
         days_forward = int(days_forward)
@@ -95,6 +140,15 @@ def all_birthdays(args, book):
 
 @input_error 
 def delete_contact(args, book):
+    """Функція видаляє контакт з ім'ям name з адресної книги AddressBook()
+
+    Args:
+        args (name: Name()): ім'я видаляємого контакта
+        book (AddressBook()): Зберігає нові поля адресної книги
+
+    Returns:
+        str: повідомлення користувачу
+    """
     name, *_ = args
     record = book.find(name)
     message = f'Контакт "{name}" видалено'
@@ -105,8 +159,17 @@ def delete_contact(args, book):
 
 @input_error 
 def edit_contact(args, book):
-    #Приклад синтаксису 1: edit Bob phones 3423233456 2334565432
-    #Приклад синтаксису 2: edit Victor email victor111@gmail.com
+    """Функція змінює поля контактів та додає нові значення якщо старе значення поля було None
+    Приклади команд: edit Bob phones 3423233456 2334565432
+                     edit Victor email victor111@gmail.com
+
+    Args:
+        args (name: str, field: str, new_value: str, old_value: None): old_value: str якщо змінюється поле phones
+        book (AddressBook()): Зберігає нові поля адресної книги
+
+    Returns:
+        str: повідомлення користувачу
+    """
     
     name, field, new_value, old_value, *_ = args + [None,]
     record = book.find(name)
@@ -119,8 +182,18 @@ def edit_contact(args, book):
 
 @input_error
 def delete_field(args, book):
-    #Приклад синтаксису 1: delete-field Jane phones 4534231295
-    #Приклад синтаксису 1: delete-field Bob address
+    """Функція видаляє поле задане користувачем, для полів birthday, address, email - шляхом встановлення 
+    значення None у змінну, для phones - видалення елементу списку
+    Приклади команд: delete-field Jane phones 4534231295
+                     delete-field Bob address
+
+    Args:
+        args (name: str, field: str, value: None): ім'я, поле яке треба видалити, value:str якщо треба видалити конкретний номер
+        book (AddressBook()): Зберігає нові поля адресної книги
+
+    Returns:
+        str: повідомлення користувачу
+    """
     
     name, field, value, *_ = args + [None,]
     record = book.find(name)
@@ -133,6 +206,15 @@ def delete_field(args, book):
 
 @input_error
 def find_contact(args, book):
+    """_summary_
+
+    Args:
+        args (_type_): _description_
+        book (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     field, value, *_ = args
     result = []
 
@@ -154,6 +236,11 @@ def find_contact(args, book):
     return "\n".join(str(r) for r in result)
 
 def print_notes(notes_list):        # Табличний вивід нотаток
+    """_summary_
+
+    Args:
+        notes_list (_type_): _description_
+    """
     delim = " | "
     title1, title2, title3 = 'Index', 'Notes', 'Tags'
     index_width = max(len(notes_list), len(title1))     # Вирахування ширини стовбця Індекс
@@ -169,6 +256,14 @@ def print_notes(notes_list):        # Табличний вивід нотато
 
 @input_error
 def add_note(notes):        # Додавання нотатки
+    """_summary_
+
+    Args:
+        notes (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     message = "Note is empty and not added"
     text = input("Enter note text: ")
     tags = input("Enter tags separated by commas: ").split(", ")
@@ -179,6 +274,17 @@ def add_note(notes):        # Додавання нотатки
 
 @input_error
 def delete_note(notes):     # Видалення нотатки за індексом
+    """_summary_
+
+    Args:
+        notes (_type_): _description_
+
+    Raises:
+        NotesIndexNotValid: _description_
+
+    Returns:
+        _type_: _description_
+    """
     index_note = input("Index of notes: ")
     try: 
         if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
@@ -192,6 +298,14 @@ def delete_note(notes):     # Видалення нотатки за індек�
 
 @input_error
 def search_note(notes):     # Пошук нотатків за ключевим словом у тексті нотатки або тегах
+    """_summary_
+
+    Args:
+        notes (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     message = ""
     key = input("Keyword or tag: ")
     matches = notes.search_note(key)     # Формування списку нотатків, що відповідають ключевому слову
@@ -203,6 +317,14 @@ def search_note(notes):     # Пошук нотатків за ключевим 
 
 @input_error
 def show_note(notes):       # Вивід усіх нотатків
+    """_summary_
+
+    Args:
+        notes (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     message = "Nothing found"
     matches = notes.show_all()
     if matches:
@@ -212,6 +334,17 @@ def show_note(notes):       # Вивід усіх нотатків
 
 @input_error
 def edit_note(notes):       # Редагування ноатків за індексом
+    """_summary_
+
+    Args:
+        notes (_type_): _description_
+
+    Raises:
+        NotesIndexNotValid: _description_
+
+    Returns:
+        _type_: _description_
+    """
     index_note = input("Index of notes: ")
     try: 
         if index_note.isdigit() and (0 <= int(index_note) < notes.len_notes()):
@@ -226,6 +359,14 @@ def edit_note(notes):       # Редагування ноатків за інд�
 
 @input_error
 def sort_note(notes):       # Сортування нотатків за тегами
+    """_summary_
+
+    Args:
+        notes (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     message = "No notes with tags"
     tag_map = notes.group_by_tag()
     if tag_map:

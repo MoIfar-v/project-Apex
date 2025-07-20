@@ -1,5 +1,4 @@
 from collections import UserList
-from datetime import datetime as dt
 
 class AddressBook(UserList):
     # реалізація класу

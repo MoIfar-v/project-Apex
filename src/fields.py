@@ -41,7 +41,7 @@ class Birthday(Field):
         today = dt.today().date()
         next_birthday = self.next_celebration()
         if(next_birthday < today):
-              next_birthday = next_birthday.replace(year=next_birthday.year+1)
+            next_birthday = next_birthday.replace(year=next_birthday.year+1)
         difference = next_birthday - today
         return difference.days <= days
         
