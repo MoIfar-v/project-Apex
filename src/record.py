@@ -34,12 +34,12 @@ class Record:
         if email:
             self.email = fields.Email(email)
     
-    def find_phone(self, phone):
+    """def find_phone(self, phone):
         try:
             phone_index = self.phones.index(phone)
             return self.phones[phone_index]
         except ValueError:
-            print(f"Contact {self.name} does not have the number {phone}.")
+            print(f"Contact {self.name} does not have the number {phone}.")"""
     
     def edit_contact(self, field, new_value, old_value):
         """Функція змінює поточне значення поля контакту та задає нове якщо значення поля = None
