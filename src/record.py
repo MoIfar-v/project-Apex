@@ -22,8 +22,13 @@ class Record:
         """
         # при створенні контакту замість пропусків "____" встановлює значення None
         pattern = r"^_+$"
-        args = [None if re.fullmatch(pattern, arg) else arg for arg in args]
-        
+        args = [None if arg == None or re.fullmatch(pattern, arg) else arg for arg in args]
+        """tmp = []
+        for arg in args:
+            if arg == None or re.fullmatch(pattern, arg):
+                tmp.append(None)
+            else:
+                tmp.append(arg)"""
         phone, birthday, address, email = args
         if phone:
             self.phones.append(str(fields.Phone(phone)))
@@ -73,6 +78,7 @@ class Record:
         elif field == "address":
             if self.address:
                 massege = "Address changed."
+                self.address = new_value
             else:
                 massege = "Address added."
             self.address = new_value # fields.Address(new_value)
