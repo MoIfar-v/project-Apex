@@ -36,23 +36,24 @@ command_find = "find"
 command_add_address = "add-address"
 
 commands = {
-    command_close: "Вийти з проекту",
-    command_exit: "Вийти з проекту",
-    command_add: "Додати контакт",
-    command_all: "Показати всі контакти",
-    command_show_birthday: "Показати день народження",
-    command_birthdays: "Показати всі дні народження",
-    command_add_note: "Додати нотатку",
-    command_delete_note: "Видалити нотатку",
-    command_show_note: "Показати усі нотатки",
-    command_search_note: "Знайти нотатку",
-    command_edit_note: "Редагувати нотатку",      
-    command_sort_note: "Сортувати нотатки",      
-    command_delete: "Видалити контакт",
-    command_edit: "Змінити поля контакту",
-    command_delete_field: "Видалення поля контакту",
-    command_find: "Знайти контакт за полем",
-    command_add_address: "Додати адресу"
+    command_close: "Exit the project",
+    command_exit: "Exit the project",
+    command_add: "Add a contact",
+    command_all: "Show all contacts",
+    command_show_birthday: "Show a birthday by contact name",
+    command_birthdays: "Show all upcoming birthdays",
+    command_delete: "Delete a contact",
+    command_edit: "Edit contact fields",
+    command_delete_field: "Delete a specific contact field",
+    command_find: "Find a contact by a specific field",
+    command_add_address: "Add an address to a contact",
+    command_add_note: "Add a note",
+    command_delete_note: "Delete a note",
+    command_show_note: "Show all notes",
+    command_search_note: "Search for a note",
+    command_edit_note: "Edit a note",      
+    command_sort_note: "Sort notes",      
+
 }
 completer = WordCompleter(commands.keys(), ignore_case=True)
 
