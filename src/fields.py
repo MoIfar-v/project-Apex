@@ -98,12 +98,8 @@ class Address(Field):
         # Повертаємо повну адресу у вигляді одного рядка
         return f"{self.city}, {self.street}"
 
-   
- 
-
-    
-    @staticmethod
+    """@staticmethod
     def print_allowed_cities(): # Show the list of allowed cities to the user
         print("Choose a city from the list:")
         for idx, city in enumerate(Address.allowed_cities, 1):
-            print(f"{idx}. {city}")
+            print(f"{idx}. {city}")"""
