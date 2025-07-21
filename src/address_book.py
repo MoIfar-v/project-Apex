@@ -6,7 +6,7 @@ class AddressBook(UserList):
         self.append(contact)
     
     def find(self, args):
-        name, *_ = args
+        name = args
         try:
             for record in self.data:
                 if record.name.value == name:
@@ -25,6 +25,6 @@ class AddressBook(UserList):
         try:
             for record in self.data:
                 if record.name.value == name:
-                    return record.birthday.birthday
+                    return record.birthday
         except KeyError:
             print("No such contact exists")
