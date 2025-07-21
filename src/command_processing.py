@@ -186,7 +186,9 @@ def edit_contact(args, book):
     record = book.find(name)
     
     if record is None:
-        return f"There is no contact named {name}"
+        message = f"There is no contact named {name}"
+        return message
+
         
     if field == 'address':
         new_value = " ".join(p for p in args[-3:])

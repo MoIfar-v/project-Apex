@@ -48,6 +48,9 @@ class Birthday(Field):
     def next_celebration(self):
         today = dt.today().date()
         return dt(year=today.year, month=self.value.month, day=self.value.day).date()
+    
+    def __str__(self):
+        return self.value.strftime("%d.%m.%Y")
         
 class Email(Field):
     def __init__(self, value):
