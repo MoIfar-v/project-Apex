@@ -188,12 +188,12 @@ def edit_contact(args, book):
     if record is None:
         message = f"There is no contact named {name}"
         return message
+
         
     if field == 'address':
         new_value = " ".join(p for p in args[-3:])
-    message = record.edit_contact(field, new_value, old_value)
-
-    return message
+        
+    return record.edit_contact(field, new_value, old_value)
 
 @input_error
 def delete_field(args, book):
