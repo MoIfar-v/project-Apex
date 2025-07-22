@@ -258,18 +258,24 @@ def print_notes(notes_list):        # Табличний вивід нотато
     Args:
         notes_list (list): список нотатків, які потрібно вивести на екран
     """
-    delim = " | "
-    title1, title2, title3 = 'Index', 'Notes', 'Tags'
-    index_width = max(len(notes_list), len(title1))     # Вирахування ширини стовбця Індекс
+    head_color = "\33[1;97;100m"
+    end_color = "\33[0m"
+    title1, title2, title3 = 'Index/Tag', 'Notes', 'Tags'
+    index_width = max(len(notes_list), len(title1), max([len(str(note[0])) for note in notes_list]))     # Вирахування ширини стовбця Індекс/Tag
     max_notes_width = max(max([len(note[1]) for note in notes_list]), len(title2))      # Вирахування ширини стовбця Текст нотатки
     max_tags_width = max(max(len(", ".join(note[2])) for note in notes_list), len(title3))      # Вирахування ширини стовбця Теги до нотатків
-    horizontal_line = "-" * (index_width + max_notes_width + len(delim)*2 + max_tags_width)     # Формування горизонтальної лінії для таблиці
-    print(horizontal_line)
-    print(f"{title1:<{index_width}}{delim}{title2:<{max_notes_width}}{delim}{title3}")      # Друк шапки таблиці
-    print(horizontal_line)
-    for note in notes_list:     # Вивід рядків таблиці нотатків
-        print(f"{Fore.YELLOW}{note[0]:<{index_width}}{Style.RESET_ALL}{delim}{note[1]:<{max_notes_width}}{delim}{Fore.GREEN}{', '.join(note[2])}{Style.RESET_ALL}")        
-    print(horizontal_line)
+    spacer = f"{head_color}{' ':<{index_width + 1}} | {' ':^{max_notes_width}} | {' ':^{max_tags_width}} {end_color}"
+    futer = f"{head_color}{' ':<{index_width + max_notes_width + max_tags_width + 8}}{end_color}"
+    head = f"{head_color} {title1:^{index_width}} | {title2:^{max_notes_width}} | {title3:^{max_tags_width}} {end_color}"
+    print(spacer)
+    print(head)      # Друк шапки таблиці
+    print(spacer)
+    for i, note in enumerate(notes_list):     # Вивід рядків таблиці нотатків
+        body_color = "\33[1;97;42m"  
+        if i % 2 == 0:
+            body_color = "\33[1;97;43m"              
+        print(f"{body_color} {note[0]:<{index_width}} | {note[1]:<{max_notes_width}} | {', '.join(note[2]):<{max_tags_width}} {end_color}")        
+    print(futer)
 
 @input_error
 def add_note(notes):        # Додавання нотатки
@@ -389,12 +395,8 @@ def sort_note(notes):       # Сортування нотатків за тег�
         str: повідомлення користувачу
     """
     message = "No notes with tags"
-    tag_map = notes.group_by_tag()      # викликається метод класу для отримання словника з группованими та сортированими нотатками
-    if tag_map:     # якщо словник не порожній 
-        for tag, notes_list in tag_map.items():     # перебираємо словник 
-            print(f"\n{tag}:")      # виводимо тег за яким згрупповані нотатки 
-            for note in notes_list:     # перебираємо список нотатків для виводу на екран 
-                print(f"    - {note}")       # виводимо нотатку на екран 
+    matches = notes.sort_by_tag()      # викликається метод класу для отримання списку з группованими та сортированими за тегами нотатками
+    if matches:     # якщо список не порожній 
+        print_notes(matches)        # викликається функція для виводу нотатків в табличному виді 
         message = ""    
     return message
-

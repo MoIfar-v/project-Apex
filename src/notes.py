@@ -37,15 +37,16 @@ class Notes:        # Класс для зберігання нотатків
             note.insert(0,idx)
         return list     #  повертаємо список усіх нотатків для виводу
        
-    def group_by_tag(self):     # функція для сортування нотатків за тегами
-        tag_map = {}        # створюємо словник для групування та сортування нотатків
-        list_tags = []       # створюємо пустий список для формування списку усіх тегів до усіх нотатків 
+    def sort_by_tag(self):     # функція для сортування нотатків за тегами
+        tag_map = []        # створюємо список для групування та сортування нотатків
+        list_tags = []       # створюємо пустий список для додавання усіх тегів до усіх нотатків 
         for note in self.notes:          # формування списку усіх тегів
-            list_tags += note.tags
-        tags_list = list(set([tag.strip() for tag in list_tags]))       # формування списку унікальних тегів для всіх нотатків
+            list_tags.extend(note.tags)
+        tags_list = list(set([tag.strip().lower() for tag in list_tags]))       # формування списку унікальних тегів для всіх нотатків
         tags_list.sort()        # сортування усіх тегів у списку
         for tag in tags_list:       # перебираємо кожен тег зі списку усіх унікальних тегів
             for note in self.notes:     # перебираємо усі нотатки
                 if tag in note.tags:        # перевіряємо чи є тег в списку тегів до нотатки та якщо є додаємо нотатку до списку нотатків до цього тега
-                    tag_map.setdefault(tag.strip().lower(), []).append(note)
-        return tag_map      #  повертаємо словник усіх сгруппованих нотатків для виводу
+                    # element = [[tag.lower(), note.text, note.tags]]
+                    tag_map.extend([[tag.lower(), note.text, note.tags]])
+        return tag_map      #  повертаємо список усіх сгруппованих нотатків для виводу
